@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../services/supabase';
+import { supabase, checkIsAdmin } from '../services/supabase';
 import { User } from '../types';
 
 interface AuthContextType {
@@ -22,16 +22,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const setUserWithAdminCheck = async (sessionUser: any) => {
+    const isAdmin = await checkIsAdmin(sessionUser.id);
+    
+    setCurrentUser({
+      id: sessionUser.id,
+      displayName: sessionUser.user_metadata.full_name || 'Anonymous',
+      photoURL: sessionUser.user_metadata.avatar_url || '',
+      email: sessionUser.email || '',
+      isAdmin,
+    });
+  };
+
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        setCurrentUser({
-          id: session.user.id,
-          displayName: session.user.user_metadata.full_name || 'Anonymous',
-          photoURL: session.user.user_metadata.avatar_url || '',
-          email: session.user.email || '',
-        });
+        setUserWithAdminCheck(session.user);
       }
       setLoading(false);
     });
@@ -39,12 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        setCurrentUser({
-          id: session.user.id,
-          displayName: session.user.user_metadata.full_name || 'Anonymous',
-          photoURL: session.user.user_metadata.avatar_url || '',
-          email: session.user.email || '',
-        });
+        setUserWithAdminCheck(session.user);
       } else {
         setCurrentUser(null);
       }

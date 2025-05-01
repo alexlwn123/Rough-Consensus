@@ -16,6 +16,7 @@ export interface User {
   displayName: string;
   photoURL: string;
   email: string;
+  isAdmin?: boolean;
 }
 
 export interface DebateSession {

@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import DebatePage from './pages/DebatePage';
 import AuthCallback from './pages/AuthCallback';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/debate/:debateId" element={<DebatePage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </AuthProvider>
     </Router>

@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { MessageSquare, LogOut } from 'lucide-react';
+import { MessageSquare, LogOut, Settings } from 'lucide-react';
 import Button from '../ui/Button';
 
 interface HeaderProps {
@@ -29,9 +30,9 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle }) => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
                 {currentUser.photoURL && (
-                  <img 
-                    src={currentUser.photoURL} 
-                    alt={currentUser.displayName} 
+                  <img
+                    src={currentUser.photoURL}
+                    alt={currentUser.displayName}
                     className="h-8 w-8 rounded-full mr-2 border-2 border-white"
                   />
                 )}
@@ -39,7 +40,20 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle }) => {
                   {currentUser.displayName}
                 </span>
               </div>
-              
+
+              {currentUser.isAdmin && (
+                <Link to="/admin">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-white text-white hover:bg-white hover:bg-opacity-10"
+                    icon={<Settings className="h-4 w-4" />}
+                  >
+                    <span className="hidden md:inline-block">Admin</span>
+                  </Button>
+                </Link>
+              )}
+
               <Button
                 variant="outline"
                 size="sm"

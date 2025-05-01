@@ -18,9 +18,8 @@ const DebatePage: React.FC = () => {
     // For demo purposes, we'll say the first user to access the page is the admin
     if (currentUser) {
       const checkIsAdmin = async () => {
-        // This would be a firestore query in a real app
-        // For now, we'll hardcode it
         setIsAdmin(true);
+        console.warn('currentUser', currentUser);
       };
       
       checkIsAdmin();
