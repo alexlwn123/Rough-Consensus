@@ -29,7 +29,7 @@ export interface User {
   isAdmin?: boolean;
 }
 
-export type Phase = "pre" | "post" | "scheduled" | "finished";
+export type Phase = "pre" | "post" | "scheduled" | "finished" | "ongoing";
 
 export interface DebateSession {
   id: string;

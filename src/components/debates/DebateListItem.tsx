@@ -65,6 +65,9 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
     minute: '2-digit'
   });
 
+  const showDateTime = debate.currentPhase !== 'finished';
+  const showJoinButton = debate.currentPhase === 'pre' || debate.currentPhase === 'post' || debate.currentPhase === 'ongoing';
+
   return (
     <Link 
       to={`/debate/${debate.id}`}
@@ -88,20 +91,28 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
           </p>
         </div>
         
-        <div className="flex items-center gap-4 text-xs text-gray-500 pt-2 border-t border-gray-100">
-          <span className="inline-flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5" />
-            {formattedDate}
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5" />
-            {formattedTime}
-          </span>
-          <span className="inline-flex items-center gap-1.5 ml-auto">
-            <Users className="h-3.5 w-3.5" />
-            Join debate
-          </span>
+        {(showDateTime || showJoinButton) && (
+          <div className="flex items-center gap-4 text-xs text-gray-500 pt-2 border-t border-gray-100">
+          {showDateTime && (
+            <>
+              <span className="inline-flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5" />
+                {formattedDate}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5" />
+                {formattedTime}
+              </span>
+            </>
+          )}
+          {showJoinButton && (
+            <span className="inline-flex items-center gap-1.5 ml-auto">
+              <Users className="h-3.5 w-3.5" />
+              Join debate
+            </span>
+          )}
         </div>
+         )} 
       </div>
     </Link>
   );
