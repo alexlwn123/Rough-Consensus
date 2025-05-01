@@ -15,24 +15,24 @@ const GitHubLogin: React.FC = () => {
   };
   
   return (
-    <div className="flex flex-col items-center justify-center p-8 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Sign in to Vote</h2>
-      <p className="text-gray-600 mb-6 text-center">
-        Authentication is required to ensure vote integrity. Your GitHub account will be used for verification.
+    <div className="flex flex-col items-center justify-center">
+      <h2 className="text-xl font-semibold text-white mb-3">
+        Join the Discussion
+      </h2>
+      <p className="text-blue-100/80 mb-6 text-center text-sm">
+        Sign in with GitHub to participate in debates and cast your votes.
       </p>
       
       <Button
         onClick={handleLogin}
-        loading={loading}
+        disabled={loading}
         icon={<Github className="h-5 w-5" />}
-        className="w-full justify-center"
+        className="w-full justify-center bg-white/90 hover:bg-white text-gray-900 hover:text-black transition-colors"
+        size="lg"
       >
-        Sign in with GitHub
+        {loading ? 'Signing in...' : 'Continue with GitHub'}
       </Button>
       
-      <p className="mt-4 text-sm text-gray-500">
-        Anonymous voting is bullshit.
-      </p>
     </div>
   );
 };

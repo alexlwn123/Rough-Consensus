@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { MessageSquare, LogOut, Settings, ArrowLeft, Menu } from 'lucide-react';
-import Button from '../ui/Button';
+import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { MessageSquare, LogOut, Settings, ArrowLeft, Menu } from "lucide-react";
+import Button from "../ui/Button";
 
 interface HeaderProps {
   title: string;
@@ -28,8 +28,8 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleMenuToggle = () => {
@@ -57,12 +57,12 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
     }
     return buttonContent;
   };
-  
+
   return (
     <header className="bg-gradient-to-r from-blue-900 to-indigo-800 text-white shadow-md relative z-20">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
+          <Link to="/" className="flex items-center">
             <MessageSquare className="h-8 w-8 mr-2" />
             <div>
               <h1 className="text-2xl font-bold">{title}</h1>
@@ -70,8 +70,8 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
                 <p className="text-blue-200 text-sm">{debateTitle}</p>
               )}
             </div>
-          </div>
-          
+          </Link>
+
           {currentUser && (
             <div className="relative">
               <Button
@@ -96,7 +96,10 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
                   )}
 
                   {currentUser.isAdmin && (
-                    <MenuButton to="/admin" icon={<Settings className="h-4 w-4" />}>
+                    <MenuButton
+                      to="/admin"
+                      icon={<Settings className="h-4 w-4" />}
+                    >
                       Admin Dashboard
                     </MenuButton>
                   )}

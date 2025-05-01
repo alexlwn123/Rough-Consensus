@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, ArrowLeft, ArrowRight, CheckCircle, Clock } from 'lucide-react';
+import { Calendar, ArrowLeft, ArrowRight, CheckCircle, Clock, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DebateSession, Phase } from '../../types';
 
@@ -15,35 +15,40 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
           text: 'Scheduled', 
           Icon: Calendar,
           bgColor: 'bg-blue-100',
-          textColor: 'text-blue-800'
+          textColor: 'text-blue-800',
+          borderColor: 'border-blue-200'
         };
       case 'pre':
         return { 
           text: 'Pre-Debate', 
           Icon: ArrowLeft,
           bgColor: 'bg-yellow-100',
-          textColor: 'text-yellow-800'
+          textColor: 'text-yellow-800',
+          borderColor: 'border-yellow-200'
         };
       case 'post':
         return { 
           text: 'Post-Debate', 
           Icon: ArrowRight,
           bgColor: 'bg-green-100',
-          textColor: 'text-green-800'
+          textColor: 'text-green-800',
+          borderColor: 'border-green-200'
         };
       case 'finished':
         return { 
           text: 'Finished', 
           Icon: CheckCircle,
           bgColor: 'bg-gray-100',
-          textColor: 'text-gray-800'
+          textColor: 'text-gray-800',
+          borderColor: 'border-gray-200'
         };
       default:
         return { 
           text: 'Unknown', 
           Icon: Calendar,
           bgColor: 'bg-gray-100',
-          textColor: 'text-gray-800'
+          textColor: 'text-gray-800',
+          borderColor: 'border-gray-200'
         };
     }
   };
@@ -63,16 +68,16 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
   return (
     <Link 
       to={`/debate/${debate.id}`}
-      className="group block bg-white shadow-sm hover:shadow-md active:shadow-inner transition-all duration-200 rounded-lg overflow-hidden"
+      className={`group block bg-white border ${phaseInfo.borderColor} shadow-sm hover:shadow-md active:shadow-inner transition-all duration-200 rounded-xl overflow-hidden`}
     >
-      <div className="p-4 sm:p-5 space-y-3">
-        <div className="space-y-1.5">
+      <div className="p-5 space-y-4">
+        <div className="space-y-2">
           <div className="flex items-start justify-between gap-3">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+            <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
               {debate.title}
             </h3>
             <span
-              className={`flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium w-fit ${phaseInfo.bgColor} ${phaseInfo.textColor}`}
+              className={`shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${phaseInfo.bgColor} ${phaseInfo.textColor} border ${phaseInfo.borderColor}`}
             >
               <phaseInfo.Icon className="h-3.5 w-3.5" />
               <span className="hidden xs:inline">{phaseInfo.text}</span>
@@ -83,7 +88,7 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
           </p>
         </div>
         
-        <div className="flex items-center gap-3 text-xs sm:text-sm text-gray-500">
+        <div className="flex items-center gap-4 text-xs text-gray-500 pt-2 border-t border-gray-100">
           <span className="inline-flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" />
             {formattedDate}
@@ -91,6 +96,10 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
           <span className="inline-flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5" />
             {formattedTime}
+          </span>
+          <span className="inline-flex items-center gap-1.5 ml-auto">
+            <Users className="h-3.5 w-3.5" />
+            Join debate
           </span>
         </div>
       </div>
