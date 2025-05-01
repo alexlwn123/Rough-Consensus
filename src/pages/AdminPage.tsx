@@ -7,6 +7,7 @@ import AdminPhaseController from "../components/admin/AdminPhaseController";
 import Header from "../components/layout/Header";
 import Button from "../components/ui/Button";
 import { Trash2 } from "lucide-react";
+import { coerceDebateFromDb, coerceDebateListFromDb } from "../lib/utils";
 
 const AdminPage: React.FC = () => {
   const { currentUser, loading } = useAuth();
@@ -33,15 +34,7 @@ const AdminPage: React.FC = () => {
         if (error) throw error;
 
         // Map database column names to our interface names
-        const mappedDebates = (data || []).map((debate) => ({
-          id: debate.id,
-          title: debate.title,
-          description: debate.description,
-          currentPhase: debate.current_phase,
-          startTime: debate.start_time,
-          endTime: debate.end_time,
-          createdBy: debate.created_by,
-        }));
+        const mappedDebates = coerceDebateListFromDb(data || []);
 
         setDebates(mappedDebates);
       } catch (error) {
@@ -88,19 +81,7 @@ const AdminPage: React.FC = () => {
       if (error) throw error;
 
       // Add the new debate to the list
-      const mappedDebate: DebateSession = {
-        id: data.id,
-        title: data.title,
-        description: data.description,
-        currentPhase: data.current_phase,
-        startTime: data.start_time,
-        endTime: data.end_time,
-        createdBy: data.created_by,
-        motion: data.motion,
-        proDescription: data.pro_description,
-        conDescription: data.con_description,
-        isDeleted: data.is_deleted,
-      };
+      const mappedDebate: DebateSession = coerceDebateFromDb(data);
 
       setDebates([mappedDebate, ...debates]);
       setFormData({ title: "", description: "" });

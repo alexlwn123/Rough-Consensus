@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { DebateProvider } from '../context/DebateContext';
 import Header from '../components/layout/Header';
 import VotingSection from '../components/voting/VotingSection';
 import ResultsPanel from '../components/results/ResultsPanel';
 import PhaseController from '../components/admin/PhaseController';
-import GitHubLogin from '../components/auth/GitHubLogin';
 
 const DebatePage: React.FC = () => {
   const { debateId } = useParams<{ debateId: string }>();
   const { currentUser, loading } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
+
   
   // In a real app, you would check if the current user is the debate creator
   useEffect(() => {
@@ -33,6 +33,10 @@ const DebatePage: React.FC = () => {
       </div>
     );
   }
+
+  if (!currentUser) {
+    return <Navigate to="/" />;
+  }
   
   if (!debateId) {
     return (
@@ -45,18 +49,6 @@ const DebatePage: React.FC = () => {
     );
   }
   
-  if (!currentUser) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header title="Debate Voting Platform" />
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-md mx-auto">
-            <GitHubLogin />
-          </div>
-        </div>
-      </div>
-    );
-  }
   
   return (
     <DebateProvider debateId={debateId}>

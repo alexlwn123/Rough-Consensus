@@ -5,6 +5,7 @@ import GitHubLogin from '../components/auth/GitHubLogin';
 import DebateList from '../components/debates/DebateList';
 import { DebateSession } from '../types';
 import { supabase } from '../services/supabase';
+import { coerceDebateListFromDb } from '../lib/utils';
 
 const HomePage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -22,19 +23,7 @@ const HomePage: React.FC = () => {
         if (error) throw error;
         
         // Map database column names to our interface names
-        const mappedDebates = (data || []).map(debate => ({
-          id: debate.id,
-          title: debate.title,
-          description: debate.description,
-          currentPhase: debate.current_phase,
-          startTime: debate.start_time,
-          endTime: debate.end_time,
-          createdBy: debate.created_by,
-          motion: debate.motion,
-          proDescription: debate.pro_description,
-          conDescription: debate.con_description,
-          isDeleted: debate.is_deleted
-        }));
+        const mappedDebates = coerceDebateListFromDb(data || []);
         
         setDebates(mappedDebates);
       } catch (error) {
@@ -83,7 +72,10 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="container mx-auto px-4 py-12">
+          <div className="container mx-auto px-4 py-4">
+            <p className="text-md font-medium italic text-gray-800 mb-2 text-center">
+              Where great minds don't think alike.
+            </p>
             <div className="max-w-7xl mx-auto">
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
