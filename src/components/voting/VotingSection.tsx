@@ -2,13 +2,15 @@ import React from 'react';
 import { VoteOption } from '../../types';
 import VoteCard from '../ui/VoteCard';
 import { useDebate } from '../../context/DebateContext';
+import { Phase } from '../../types';
 
 interface VotingSectionProps {
-  phase: 'pre' | 'post';
+  phase: Phase;
 }
 
 const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
   const { debate, handleVote, userVote } = useDebate();
+
   
   // Check if this phase is active
   const isActivePhase = debate?.currentPhase === phase;

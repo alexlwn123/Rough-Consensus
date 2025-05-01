@@ -1,15 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { MessageSquare, LogOut, Settings } from 'lucide-react';
+import { MessageSquare, LogOut, Settings, ArrowLeft } from 'lucide-react';
 import Button from '../ui/Button';
 
 interface HeaderProps {
   title: string;
   debateTitle?: string;
+  showBack?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, debateTitle }) => {
+const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
   const { currentUser, signOut } = useAuth();
   
   return (
@@ -40,6 +41,19 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle }) => {
                   {currentUser.displayName}
                 </span>
               </div>
+
+              {showBack && (
+                <Link to="/">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-white text-white hover:bg-white hover:bg-opacity-10"
+                    icon={<ArrowLeft className="h-4 w-4" />}
+                  >
+                    <span className="hidden md:inline-block">Admin</span>
+                  </Button>
+                </Link>
+              )}
 
               {currentUser.isAdmin && (
                 <Link to="/admin">

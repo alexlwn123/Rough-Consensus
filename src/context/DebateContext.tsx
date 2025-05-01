@@ -6,7 +6,7 @@ import {
   castVote,
   generateSankeyData
 } from '../services/voteService';
-import { DebateSession, VoteOption, SankeyData } from '../types';
+import { DebateSession, VoteOption, SankeyData, Tally, Phase } from '../types';
 import { useAuth } from './AuthContext';
 
 interface DebateContextType {
@@ -20,7 +20,7 @@ interface DebateContextType {
     post: Record<VoteOption, number>;
   };
   handleVote: (option: VoteOption) => Promise<void>;
-  changePhase: (phase: 'pre' | 'post') => Promise<void>;
+  changePhase: (phase: Phase) => Promise<void>;
 }
 
 const defaultVoteCounts = {
@@ -76,12 +76,14 @@ export const DebateProvider: React.FC<{
         const data = generateSankeyData(votes);
         setSankeyData(data);
       }
+
       
       // Calculate vote counts
       const counts = {
         pre: { for: 0, against: 0, undecided: 0 },
         post: { for: 0, against: 0, undecided: 0 }
-      };
+      } satisfies Tally;
+
       
       votes.forEach(vote => {
         if (vote.preDebate) {
@@ -91,8 +93,13 @@ export const DebateProvider: React.FC<{
           counts.post[vote.postDebate.option] += 1;
         }
       });
+
+      const fakeCounts = {
+        pre: { for: 100, against: 100, undecided: 100 },
+        post: { for: 100, against: 100, undecided: 100 }
+      }
       
-      setVoteCounts(counts);
+      setVoteCounts(fakeCounts);
     });
 
     return () => unsubscribe();
@@ -111,7 +118,7 @@ export const DebateProvider: React.FC<{
   };
 
   // Change debate phase
-  const changePhase = async (phase: 'pre' | 'post') => {
+  const changePhase = async (phase: Phase) => {
     if (!debate) return;
     
     try {
@@ -137,6 +144,7 @@ export const DebateProvider: React.FC<{
     handleVote,
     changePhase,
   };
+  console.warn('context', value);
 
   return <DebateContext.Provider value={value}>{children}</DebateContext.Provider>;
 };

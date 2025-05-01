@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { DebateSession } from '../types';
+import { DebateSession, Phase } from '../types';
 import { supabase } from '../services/supabase';
 import AdminPhaseController from '../components/admin/AdminPhaseController';
+import Header from '../components/layout/Header';
 
 const AdminPage: React.FC = () => {
   const { currentUser, loading } = useAuth();
@@ -32,7 +33,7 @@ const AdminPage: React.FC = () => {
           id: debate.id,
           title: debate.title,
           description: debate.description,
-          currentPhase: debate.current_phase as 'pre' | 'post',
+          currentPhase: debate.current_phase,
           startTime: debate.start_time,
           endTime: debate.end_time,
           createdBy: debate.created_by
@@ -66,7 +67,7 @@ const AdminPage: React.FC = () => {
       const newDebate = {
         title: formData.title,
         description: formData.description,
-        current_phase: 'pre',
+        current_phase: 'scheduled',
         created_by: currentUser.id,
       };
 
@@ -83,7 +84,7 @@ const AdminPage: React.FC = () => {
         id: data.id,
         title: data.title,
         description: data.description,
-        currentPhase: data.current_phase as 'pre' | 'post',
+        currentPhase: data.current_phase,
         startTime: data.start_time,
         endTime: data.end_time,
         createdBy: data.created_by
@@ -97,7 +98,7 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const handleUpdatePhase = async (debateId: string, phase: 'pre' | 'post') => {
+  const handleUpdatePhase = async (debateId: string, phase: Phase) => {
     try {
       const { error } = await supabase
         .from('debates')
@@ -122,24 +123,25 @@ const AdminPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+    <div className="min-h-screen bg-gray-50">
+      <Header title="Admin Dashboard" showBack />
+      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 max-w-7xl">
 
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Debates</h2>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-6 mb-6">
+        <h2 className="text-xl sm:text-2xl font-semibold">Debates</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+          className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
         >
           {showForm ? 'Cancel' : 'Create New Debate'}
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-          <h3 className="text-xl font-semibold mb-4">Create New Debate</h3>
-          <form onSubmit={handleCreateDebate}>
-            <div className="mb-4">
+        <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 mb-6">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">Create New Debate</h3>
+          <form onSubmit={handleCreateDebate} className="space-y-4">
+            <div>
               <label htmlFor="title" className="block text-gray-700 font-medium mb-2">
                 Title
               </label>
@@ -148,11 +150,11 @@ const AdminPage: React.FC = () => {
                 id="title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full border border-gray-300 rounded px-3 py-2"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label htmlFor="description" className="block text-gray-700 font-medium mb-2">
                 Description
               </label>
@@ -160,13 +162,13 @@ const AdminPage: React.FC = () => {
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full border border-gray-300 rounded px-3 py-2"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows={4}
               />
             </div>
             <button
               type="submit"
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+              className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors"
             >
               Create Debate
             </button>
@@ -179,23 +181,36 @@ const AdminPage: React.FC = () => {
       ) : debates.length === 0 ? (
         <div className="text-center py-4">No debates found. Create one to get started.</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {debates.map((debate) => (
-            <div key={debate.id} className="bg-white shadow-md rounded-lg overflow-hidden">
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{debate.title}</h3>
-                <p className="text-gray-600 mb-4">
+            <div 
+              key={debate.id} 
+              className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="p-4 sm:p-6 space-y-3">
+                <h3 className="text-lg sm:text-xl font-semibold line-clamp-2">{debate.title}</h3>
+                <p className="text-gray-600 text-sm sm:text-base line-clamp-3">
                   {debate.description || 'No description provided'}
                 </p>
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:justify-between">
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      debate.currentPhase === 'pre'
+                    className={`inline-flex px-3 py-1 rounded-full text-sm font-medium w-fit ${
+                      debate.currentPhase === 'scheduled'
+                        ? 'bg-blue-100 text-blue-800'
+                        : debate.currentPhase === 'pre'
                         ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-green-100 text-green-800'
+                        : debate.currentPhase === 'post'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    {debate.currentPhase === 'pre' ? 'Pre-Debate' : 'Post-Debate'}
+                    {debate.currentPhase === 'scheduled'
+                      ? 'Scheduled'
+                      : debate.currentPhase === 'pre'
+                      ? 'Pre-Debate'
+                      : debate.currentPhase === 'post'
+                      ? 'Post-Debate'
+                      : 'Finished'}
                   </span>
                   <span className="text-sm text-gray-500">
                     {new Date(debate.startTime).toLocaleDateString()}
@@ -211,6 +226,7 @@ const AdminPage: React.FC = () => {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 };

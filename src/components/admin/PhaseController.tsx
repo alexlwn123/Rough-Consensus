@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useDebate } from '../../context/DebateContext';
 import Button from '../ui/Button';
+import { Phase } from '../../types';
 
 interface PhaseControllerProps {
   isAdmin: boolean;
@@ -12,7 +13,7 @@ const PhaseController: React.FC<PhaseControllerProps> = ({ isAdmin }) => {
   
   if (!debate) return null;
   
-  const handlePhaseChange = async (phase: 'pre' | 'post') => {
+  const handlePhaseChange = async (phase: Phase) => {
     try {
       await changePhase(phase);
     } catch (error) {

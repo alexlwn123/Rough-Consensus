@@ -1,10 +1,20 @@
-export type VoteOption = 'for' | 'against' | 'undecided';
+export type VoteOption = "for" | "against" | "undecided";
 
 export interface Vote {
   userId: string;
   option: VoteOption;
   timestamp: number;
 }
+
+export type CastedVote = {
+  preDebate: { option: VoteOption };
+  postDebate: { option: VoteOption };
+};
+
+export type Tally = {
+  pre: Record<VoteOption, number>;
+  post: Record<VoteOption, number>;
+};
 
 export interface UserVotes {
   preDebate?: Vote;
@@ -19,11 +29,13 @@ export interface User {
   isAdmin?: boolean;
 }
 
+export type Phase = "pre" | "post" | "scheduled" | "finished";
+
 export interface DebateSession {
   id: string;
   title: string;
   description: string;
-  currentPhase: 'pre' | 'post';
+  currentPhase: Phase;
   startTime: number;
   endTime?: number;
   createdBy: string;
