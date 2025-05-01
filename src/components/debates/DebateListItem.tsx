@@ -20,7 +20,7 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
         };
       case 'pre':
         return { 
-          text: 'Pre-Debate', 
+          text: 'Pre-Debate Vote', 
           Icon: ArrowLeft,
           bgColor: 'bg-yellow-100',
           textColor: 'text-yellow-800',
@@ -28,7 +28,7 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
         };
       case 'post':
         return { 
-          text: 'Post-Debate', 
+          text: 'Post-Debate Vote', 
           Icon: ArrowRight,
           bgColor: 'bg-green-100',
           textColor: 'text-green-800',
@@ -83,7 +83,7 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
               className={`shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${phaseInfo.bgColor} ${phaseInfo.textColor} border ${phaseInfo.borderColor}`}
             >
               <phaseInfo.Icon className="h-3.5 w-3.5" />
-              <span className="hidden xs:inline">{phaseInfo.text}</span>
+              <span className="xs:inline">{phaseInfo.text}</span>
             </span>
           </div>
           <p className="text-sm text-gray-600 line-clamp-2 min-h-[2.5rem]">

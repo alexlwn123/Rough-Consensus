@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/layout/Header';
 import GitHubLogin from '../components/auth/GitHubLogin';
-import DebateListItem from '../components/debates/DebateListItem';
 import DebateList from '../components/debates/DebateList';
 import { DebateSession } from '../types';
 import { supabase } from '../services/supabase';
@@ -30,7 +29,11 @@ const HomePage: React.FC = () => {
           currentPhase: debate.current_phase,
           startTime: debate.start_time,
           endTime: debate.end_time,
-          createdBy: debate.created_by
+          createdBy: debate.created_by,
+          motion: debate.motion,
+          proDescription: debate.pro_description,
+          conDescription: debate.con_description,
+          isDeleted: debate.is_deleted
         }));
         
         setDebates(mappedDebates);
@@ -45,7 +48,7 @@ const HomePage: React.FC = () => {
   }, []);
 
   const ongoingDebates = debates.filter(
-    debate => debate.currentPhase === 'pre' || debate.currentPhase === 'post'
+    debate => debate.currentPhase === 'pre' || debate.currentPhase === 'post' || debate.currentPhase === 'ongoing'
   );
   
   const scheduledDebates = debates.filter(

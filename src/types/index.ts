@@ -39,6 +39,10 @@ export interface DebateSession {
   startTime: number;
   endTime?: number;
   createdBy: string;
+  motion: string;
+  proDescription: string;
+  conDescription: string;
+  isDeleted: boolean;
 }
 
 export interface SankeyLink {
