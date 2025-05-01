@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { MessageSquare, LogOut, Settings, ArrowLeft } from 'lucide-react';
+import { MessageSquare, LogOut, Settings, ArrowLeft, Menu } from 'lucide-react';
 import Button from '../ui/Button';
 
 interface HeaderProps {
@@ -12,12 +12,57 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
   const { currentUser, signOut } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        buttonRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleMenuToggle = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const MenuButton: React.FC<{
+    to?: string;
+    onClick?: () => void;
+    icon: React.ReactNode;
+    children: React.ReactNode;
+  }> = ({ to, onClick, icon, children }) => {
+    const buttonContent = (
+      <button
+        onClick={onClick}
+        className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-100 text-sm transition-colors"
+      >
+        {icon}
+        <span>{children}</span>
+      </button>
+    );
+
+    if (to) {
+      return <Link to={to}>{buttonContent}</Link>;
+    }
+    return buttonContent;
+  };
   
   return (
-    <header className="bg-gradient-to-r from-blue-900 to-indigo-800 text-white shadow-md">
+    <header className="bg-gradient-to-r from-blue-900 to-indigo-800 text-white shadow-md relative z-20">
       <div className="container mx-auto px-4 py-4">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center mb-4 md:mb-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <MessageSquare className="h-8 w-8 mr-2" />
             <div>
               <h1 className="text-2xl font-bold">{title}</h1>
@@ -28,55 +73,45 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
           </div>
           
           {currentUser && (
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                {currentUser.photoURL && (
-                  <img
-                    src={currentUser.photoURL}
-                    alt={currentUser.displayName}
-                    className="h-8 w-8 rounded-full mr-2 border-2 border-white"
-                  />
-                )}
-                <span className="text-sm hidden md:inline-block">
-                  {currentUser.displayName}
-                </span>
-              </div>
-
-              {showBack && (
-                <Link to="/">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-white text-white hover:bg-white hover:bg-opacity-10"
-                    icon={<ArrowLeft className="h-4 w-4" />}
-                  >
-                    <span className="hidden md:inline-block">Admin</span>
-                  </Button>
-                </Link>
-              )}
-
-              {currentUser.isAdmin && (
-                <Link to="/admin">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-white text-white hover:bg-white hover:bg-opacity-10"
-                    icon={<Settings className="h-4 w-4" />}
-                  >
-                    <span className="hidden md:inline-block">Admin</span>
-                  </Button>
-                </Link>
-              )}
-
+            <div className="relative">
               <Button
+                ref={buttonRef}
                 variant="outline"
                 size="sm"
-                onClick={signOut}
+                onClick={handleMenuToggle}
                 className="border-white text-white hover:bg-white hover:bg-opacity-10"
-                icon={<LogOut className="h-4 w-4" />}
-              >
-                <span className="hidden md:inline-block">Sign Out</span>
-              </Button>
+                icon={<Menu className="h-5 w-5" />}
+                aria-label="Menu"
+              />
+
+              {isMenuOpen && (
+                <div
+                  ref={menuRef}
+                  className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 border border-gray-200"
+                >
+                  {showBack && (
+                    <MenuButton to="/" icon={<ArrowLeft className="h-4 w-4" />}>
+                      Back to Home
+                    </MenuButton>
+                  )}
+
+                  {currentUser.isAdmin && (
+                    <MenuButton to="/admin" icon={<Settings className="h-4 w-4" />}>
+                      Admin Dashboard
+                    </MenuButton>
+                  )}
+
+                  <MenuButton
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    icon={<LogOut className="h-4 w-4" />}
+                  >
+                    Sign Out
+                  </MenuButton>
+                </div>
+              )}
             </div>
           )}
         </div>
