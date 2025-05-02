@@ -4,7 +4,7 @@ import SankeyDiagram from "./SankeyDiagram";
 import { BarChart, Activity } from "lucide-react";
 
 const ResultsPanel: React.FC = () => {
-  const { voteCounts, sankeyData } = useDebate();
+  const { voteCounts, sankeyData, debate } = useDebate();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   // Update window width on resize for responsive chart
@@ -82,6 +82,17 @@ const ResultsPanel: React.FC = () => {
 
   const winner = determineWinner();
 
+  const isFinished = debate?.currentPhase === "finished";
+
+  if (!isFinished) {
+    return (
+      <div className="border rounded-xl p-6 bg-white shadow-md">
+        <p className="text-gray-700 text-center">
+          Results will appear here once the debate is finished.
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="border rounded-xl p-6 bg-white shadow-md">
       <div className="flex items-center mb-6">
@@ -107,7 +118,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.pre?.against} votes (
                 {calculatePercentage(
                   voteCounts?.pre?.against ?? 0,
-                  preTotalVotes,
+                  preTotalVotes
                 )}
                 %)
               </span>
@@ -118,7 +129,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.pre?.undecided} votes (
                 {calculatePercentage(
                   voteCounts?.pre?.undecided ?? 0,
-                  preTotalVotes,
+                  preTotalVotes
                 )}
                 %)
               </span>
@@ -141,7 +152,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.post?.for} votes (
                 {calculatePercentage(
                   voteCounts?.post?.for ?? 0,
-                  postTotalVotes,
+                  postTotalVotes
                 )}
                 %)
               </span>
@@ -152,7 +163,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.post?.against} votes (
                 {calculatePercentage(
                   voteCounts?.post?.against ?? 0,
-                  postTotalVotes,
+                  postTotalVotes
                 )}
                 %)
               </span>
@@ -163,7 +174,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.post?.undecided} votes (
                 {calculatePercentage(
                   voteCounts?.post?.undecided ?? 0,
-                  postTotalVotes,
+                  postTotalVotes
                 )}
                 %)
               </span>

@@ -1,4 +1,4 @@
-import { supabase } from "../services/supabase";
+import { fetchDebate, supabase } from "../services/supabase";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   subscribeToDebate,
@@ -9,6 +9,7 @@ import {
 } from "../services/voteService";
 import { Debate, VoteOption, DbSankeyData, Tally, Phase, Vote } from "../types";
 import { useAuth } from "./AuthContext";
+import { coerceDebateFromDb } from "../lib/utils";
 
 interface DebateContextType {
   debate: Debate | null;
@@ -53,6 +54,20 @@ export const DebateProvider: React.FC<{
   // Subscribe to debate changes
   useEffect(() => {
     if (!debateId) return;
+
+    const fetch = async () => {
+      try {
+        const debateData = await fetchDebate(debateId);
+        const mappedDebate = coerceDebateFromDb(debateData);
+        setDebate(mappedDebate);
+      } catch (err) {
+        console.error("Error fetching debate:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetch();
 
     const unsubscribe = subscribeToDebate(debateId, (debateData) => {
       setDebate(debateData);

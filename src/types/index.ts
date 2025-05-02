@@ -1,5 +1,5 @@
 import { Session } from "@supabase/supabase-js";
-import { CompositeTypes, Enums, Tables } from "./Database.types";
+import { CompositeTypes, Enums, Tables } from "./database.types";
 
 export type VoteOption = "for" | "against" | "undecided";
 

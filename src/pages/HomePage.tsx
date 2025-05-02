@@ -5,7 +5,7 @@ import Footer from "../components/layout/Footer";
 import GitHubLogin from "../components/auth/GitHubLogin";
 import DebateList from "../components/debates/DebateList";
 import { Debate } from "../types";
-import { supabase } from "../services/supabase";
+import { fetchDebates } from "../services/supabase";
 import { coerceDebateListFromDb } from "../lib/utils";
 import bitcoinChatImage from "../assets/bitcoinchat.png";
 
@@ -15,14 +15,9 @@ const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDebates = async () => {
+    const fetch = async () => {
       try {
-        const { data, error } = await supabase
-          .from("debates")
-          .select("*")
-          .order("start_time", { ascending: true });
-
-        if (error) throw error;
+        const data = await fetchDebates();
 
         // Map database column names to our interface names
         const mappedDebates = coerceDebateListFromDb(data || []);
@@ -35,22 +30,22 @@ const HomePage: React.FC = () => {
       }
     };
 
-    fetchDebates();
+    fetch();
   }, []);
 
   const ongoingDebates = debates.filter(
     (debate) =>
       debate.currentPhase === "pre" ||
       debate.currentPhase === "post" ||
-      debate.currentPhase === "ongoing",
+      debate.currentPhase === "ongoing"
   );
 
   const scheduledDebates = debates.filter(
-    (debate) => debate.currentPhase === "scheduled",
+    (debate) => debate.currentPhase === "scheduled"
   );
 
   const pastDebates = debates.filter(
-    (debate) => debate.currentPhase === "finished",
+    (debate) => debate.currentPhase === "finished"
   );
 
   return (
