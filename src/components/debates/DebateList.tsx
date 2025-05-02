@@ -1,46 +1,48 @@
-import React from 'react';
-import { Debate } from '../../types/index';
-import DebateListItem from './DebateListItem';
-import { Live } from '../ui/Live';
+import React from "react";
+import { Debate } from "../../types/index";
+import DebateListItem from "./DebateListItem";
+import { Live } from "../ui/Live";
 
 interface DebateListProps {
   title: string;
   debates: Debate[];
   emptyMessage: string;
-  status: 'ongoing' | 'upcoming' | 'past';
+  status: "ongoing" | "upcoming" | "past";
 }
 
-const DebateList: React.FC<DebateListProps> = ({ 
-  title, 
+const DebateList: React.FC<DebateListProps> = ({
+  title,
   debates,
   emptyMessage,
-  status
+  status,
 }) => {
   const getStatusStyles = () => {
     switch (status) {
-      case 'ongoing':
+      case "ongoing":
         return {
-          container: 'bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-6',
-          header: 'border-blue-200',
-          title: 'text-blue-900',
-          badge: 'bg-blue-100 text-blue-700',
-          counter: 'bg-white/80 backdrop-blur-sm shadow-sm border border-blue-100'
+          container:
+            "bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-6",
+          header: "border-blue-200",
+          title: "text-blue-900",
+          badge: "bg-blue-100 text-blue-700",
+          counter:
+            "bg-white/80 backdrop-blur-sm shadow-sm border border-blue-100",
         };
-      case 'upcoming':
+      case "upcoming":
         return {
-          container: 'bg-white border border-gray-200 rounded-xl p-6',
-          header: 'border-gray-200',
-          title: 'text-gray-900',
-          badge: 'bg-gray-100 text-gray-600',
-          counter: 'bg-gray-100'
+          container: "bg-white border border-gray-200 rounded-xl p-6",
+          header: "border-gray-200",
+          title: "text-gray-900",
+          badge: "bg-gray-100 text-gray-600",
+          counter: "bg-gray-100",
         };
-      case 'past':
+      case "past":
         return {
-          container: 'bg-gray-50 border border-gray-200 rounded-xl p-6',
-          header: 'border-gray-200',
-          title: 'text-gray-900',
-          badge: 'bg-gray-100 text-gray-600',
-          counter: 'bg-white'
+          container: "bg-gray-50 border border-gray-200 rounded-xl p-6",
+          header: "border-gray-200",
+          title: "text-gray-900",
+          badge: "bg-gray-100 text-gray-600",
+          counter: "bg-white",
         };
     }
   };
@@ -84,4 +86,4 @@ const DebateList: React.FC<DebateListProps> = ({
   );
 };
 
-export default DebateList; 
+export default DebateList;

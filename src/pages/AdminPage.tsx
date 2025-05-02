@@ -14,9 +14,7 @@ const AdminPage: React.FC = () => {
   const { currentUser, loading } = useAuth();
   const [debates, setDebates] = useState<Debate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedDebate, setSelectedDebate] = useState<Debate | null>(
-    null
-  );
+  const [selectedDebate, setSelectedDebate] = useState<Debate | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -104,8 +102,8 @@ const AdminPage: React.FC = () => {
       // Update local state
       setDebates(
         debates.map((debate) =>
-          debate.id === debateId ? { ...debate, currentPhase: phase } : debate
-        )
+          debate.id === debateId ? { ...debate, currentPhase: phase } : debate,
+        ),
       );
 
       if (selectedDebate && selectedDebate.id === debateId) {
@@ -219,21 +217,21 @@ const AdminPage: React.FC = () => {
                         debate.currentPhase === "scheduled"
                           ? "bg-blue-100 text-blue-800"
                           : debate.currentPhase === "pre"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : debate.currentPhase === "post"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : debate.currentPhase === "post"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {debate.currentPhase === "scheduled"
                         ? "Scheduled"
                         : debate.currentPhase === "pre"
-                        ? "Pre-Debate"
-                        : debate.currentPhase === "ongoing"
-                        ? "Ongoing"
-                        : debate.currentPhase === "post"
-                        ? "Post-Debate"
-                        : "Finished"}
+                          ? "Pre-Debate"
+                          : debate.currentPhase === "ongoing"
+                            ? "Ongoing"
+                            : debate.currentPhase === "post"
+                              ? "Post-Debate"
+                              : "Finished"}
                     </span>
                     <span className="text-sm text-gray-500">
                       {new Date(debate.startTime).toLocaleDateString()}

@@ -27,18 +27,21 @@ While developed for Bitcoin++ conferences, this certainly can be used for other 
 ## Getting Started
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/rough-consensus/debate-voting.git
 cd debate-voting
 ```
 
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
 
 3. Set up environment variables:
-Create a `.env` file with the following variables:
+   Create a `.env` file with the following variables:
+
 ```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -46,6 +49,7 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 ```
 
 4. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -57,4 +61,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 MIT License - see the [LICENSE](LICENSE) file for details.
-

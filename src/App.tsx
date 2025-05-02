@@ -1,9 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import HomePage from './pages/HomePage';
-import DebatePage from './pages/DebatePage';
-import AuthCallback from './pages/AuthCallback';
-import AdminPage from './pages/AdminPage';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import HomePage from "./pages/HomePage";
+import DebatePage from "./pages/DebatePage";
+import AuthCallback from "./pages/AuthCallback";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (

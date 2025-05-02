@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import bitcoinChatImage from '../../assets/bitcoinchat.png';
+import bitcoinChatImage from "../../assets/bitcoinchat.png";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { LogOut, Settings, ArrowLeft, Menu } from "lucide-react";
@@ -69,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
               alt="Bitcoin Chat"
               className="w-16 h-16 object-contain drop-shadow-xl"
               aria-hidden="true"
-              />
+            />
             <div>
               <h1 className="text-2xl font-bold">{title}</h1>
               {debateTitle && (

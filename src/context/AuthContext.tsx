@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase, checkIsAdmin } from '../services/supabase';
-import { SessionUser, User } from '../types';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { supabase, checkIsAdmin } from "../services/supabase";
+import { SessionUser, User } from "../types";
 
 interface AuthContextType {
   currentUser: User | null;
@@ -18,16 +18,18 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   const setUserWithAdminCheck = async (sessionUser: SessionUser) => {
     const isAdmin = await checkIsAdmin(sessionUser.id);
-    
+
     setCurrentUser({
       id: sessionUser.id,
-      displayName: sessionUser.user_metadata.full_name || 'Anonymous',
+      displayName: sessionUser.user_metadata.full_name || "Anonymous",
       isAdmin,
     });
   };
@@ -42,7 +44,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUserWithAdminCheck(session.user);
       } else {
@@ -59,11 +63,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
+        provider: "github",
       });
       if (error) throw error;
     } catch (error) {
-      console.error('Failed to sign in:', error);
+      console.error("Failed to sign in:", error);
       throw error;
     }
   };
@@ -73,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (error) {
-      console.error('Failed to sign out:', error);
+      console.error("Failed to sign out:", error);
       throw error;
     }
   };

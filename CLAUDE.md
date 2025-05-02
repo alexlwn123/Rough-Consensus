@@ -1,6 +1,7 @@
 # CLAUDE.md - Guide for AI Assistants
 
 ## Commands
+
 - Development: `pnpm dev` or `yarn dev`
 - Build: `pnpm build` or `yarn build`
 - Lint: `pnpm lint` or `yarn lint`
@@ -8,6 +9,7 @@
 - Always use `zsh` for shell commands
 
 ## Code Style
+
 - TypeScript with strict mode enabled
 - React with functional components and hooks
 - Use TSX for React components
@@ -23,6 +25,7 @@
 - Lucide icons for UI elements
 
 ## Project Structure
+
 - React + Vite + TypeScript + TailwindCSS
 - D3 with d3-sankey for visualization
 - React Router for navigation

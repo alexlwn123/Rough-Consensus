@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../services/supabase';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../services/supabase";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -8,7 +8,7 @@ const AuthCallback = () => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate('/', { replace: true });
+        navigate("/", { replace: true });
       }
     });
   }, [navigate]);

@@ -107,7 +107,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.pre?.against} votes (
                 {calculatePercentage(
                   voteCounts?.pre?.against ?? 0,
-                  preTotalVotes
+                  preTotalVotes,
                 )}
                 %)
               </span>
@@ -118,7 +118,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.pre?.undecided} votes (
                 {calculatePercentage(
                   voteCounts?.pre?.undecided ?? 0,
-                  preTotalVotes
+                  preTotalVotes,
                 )}
                 %)
               </span>
@@ -141,7 +141,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.post?.for} votes (
                 {calculatePercentage(
                   voteCounts?.post?.for ?? 0,
-                  postTotalVotes
+                  postTotalVotes,
                 )}
                 %)
               </span>
@@ -152,7 +152,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.post?.against} votes (
                 {calculatePercentage(
                   voteCounts?.post?.against ?? 0,
-                  postTotalVotes
+                  postTotalVotes,
                 )}
                 %)
               </span>
@@ -163,7 +163,7 @@ const ResultsPanel: React.FC = () => {
                 {voteCounts?.post?.undecided} votes (
                 {calculatePercentage(
                   voteCounts?.post?.undecided ?? 0,
-                  postTotalVotes
+                  postTotalVotes,
                 )}
                 %)
               </span>
@@ -187,8 +187,8 @@ const ResultsPanel: React.FC = () => {
                   shifts.for > 0
                     ? "text-green-600"
                     : shifts.for < 0
-                    ? "text-red-600"
-                    : ""
+                      ? "text-red-600"
+                      : ""
                 }`}
               >
                 {shifts.for > 0 ? "+" : ""}
@@ -202,8 +202,8 @@ const ResultsPanel: React.FC = () => {
                   shifts.against > 0
                     ? "text-green-600"
                     : shifts.against < 0
-                    ? "text-red-600"
-                    : ""
+                      ? "text-red-600"
+                      : ""
                 }`}
               >
                 {shifts.against > 0 ? "+" : ""}
@@ -217,8 +217,8 @@ const ResultsPanel: React.FC = () => {
                   shifts.undecided > 0
                     ? "text-green-600"
                     : shifts.undecided < 0
-                    ? "text-red-600"
-                    : ""
+                      ? "text-red-600"
+                      : ""
                 }`}
               >
                 {shifts.undecided > 0 ? "+" : ""}
@@ -233,19 +233,19 @@ const ResultsPanel: React.FC = () => {
                     winner === "for"
                       ? "text-green-700"
                       : winner === "against"
-                      ? "text-red-700"
-                      : winner === "tie"
-                      ? "text-blue-700"
-                      : "text-gray-700"
+                        ? "text-red-700"
+                        : winner === "tie"
+                          ? "text-blue-700"
+                          : "text-gray-700"
                   }
                 >
                   {winner === "for"
                     ? "For the Motion"
                     : winner === "against"
-                    ? "Against the Motion"
-                    : winner === "tie"
-                    ? "Tie"
-                    : "Not Enough Data"}
+                      ? "Against the Motion"
+                      : winner === "tie"
+                        ? "Tie"
+                        : "Not Enough Data"}
                 </span>
               </div>
             </div>

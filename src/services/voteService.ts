@@ -14,7 +14,7 @@ export const castVote = async (
   debateId: string,
   userId: string,
   phase: "pre" | "post",
-  option: VoteOption
+  option: VoteOption,
 ) => {
   try {
     const vote: Vote = {
@@ -61,7 +61,7 @@ export const updateDebatePhase = async (debateId: string, phase: Phase) => {
 // Subscribe to debate changes
 export const subscribeToDebate = (
   debateId: string,
-  callback: (debate: Debate) => void
+  callback: (debate: Debate) => void,
 ) => {
   const subscription = supabase
     .channel(`debate:${debateId}`)
@@ -75,7 +75,7 @@ export const subscribeToDebate = (
       },
       (payload) => {
         callback(payload.new as Debate);
-      }
+      },
     )
     .subscribe();
 
@@ -107,7 +107,7 @@ export const getDebateVoteCounts = async (debateId: string) => {
 
 // Get Sankey data for a debate (server-side aggregation)
 export const getDebateSankeyData = async (
-  debateId: string
+  debateId: string,
 ): Promise<DbSankeyData | null> => {
   try {
     const { data, error } = await supabase.rpc("get_debate_sankey_data", {
@@ -126,7 +126,7 @@ export const getDebateSankeyData = async (
 // Subscribe to vote count changes
 export const subscribeToVoteCounts = (
   debateId: string,
-  callback: (voteCounts: Tally) => void
+  callback: (voteCounts: Tally) => void,
 ) => {
   // Initial fetch
   getDebateVoteCounts(debateId).then(callback);
@@ -145,7 +145,7 @@ export const subscribeToVoteCounts = (
         // Get updated counts when votes change
         const counts = await getDebateVoteCounts(debateId);
         callback(counts);
-      }
+      },
     )
     .subscribe();
 
@@ -157,7 +157,7 @@ export const subscribeToVoteCounts = (
 // Subscribe to Sankey data changes
 export const subscribeToSankeyData = (
   debateId: string,
-  callback: (sankeyData: DbSankeyData | null) => void
+  callback: (sankeyData: DbSankeyData | null) => void,
 ) => {
   // Initial fetch
   getDebateSankeyData(debateId).then(callback);
@@ -177,7 +177,7 @@ export const subscribeToSankeyData = (
         // Get updated Sankey data when votes change
         const sankeyData = await getDebateSankeyData(debateId);
         callback(sankeyData);
-      }
+      },
     )
     .subscribe();
 
@@ -215,7 +215,7 @@ export const generateSankeyData = (votes: CastedVote[]): DbSankeyData => {
       const postIndex = getNodeIndex(vote.postDebate.option) + 3;
 
       const linkIndex = links.findIndex(
-        (link) => link.source === preIndex && link.target === postIndex
+        (link) => link.source === preIndex && link.target === postIndex,
       );
 
       if (linkIndex !== -1) {

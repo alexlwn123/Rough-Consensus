@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
-import GitHubLogin from '../components/auth/GitHubLogin';
-import DebateList from '../components/debates/DebateList';
-import { Debate } from '../types';
-import { supabase } from '../services/supabase';
-import { coerceDebateListFromDb } from '../lib/utils';
-import bitcoinChatImage from '../assets/bitcoinchat.png';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import Header from "../components/layout/Header";
+import Footer from "../components/layout/Footer";
+import GitHubLogin from "../components/auth/GitHubLogin";
+import DebateList from "../components/debates/DebateList";
+import { Debate } from "../types";
+import { supabase } from "../services/supabase";
+import { coerceDebateListFromDb } from "../lib/utils";
+import bitcoinChatImage from "../assets/bitcoinchat.png";
 
 const HomePage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -42,15 +42,15 @@ const HomePage: React.FC = () => {
     (debate) =>
       debate.currentPhase === "pre" ||
       debate.currentPhase === "post" ||
-      debate.currentPhase === "ongoing"
+      debate.currentPhase === "ongoing",
   );
 
   const scheduledDebates = debates.filter(
-    (debate) => debate.currentPhase === "scheduled"
+    (debate) => debate.currentPhase === "scheduled",
   );
 
   const pastDebates = debates.filter(
-    (debate) => debate.currentPhase === "finished"
+    (debate) => debate.currentPhase === "finished",
   );
 
   return (
@@ -152,7 +152,7 @@ const HomePage: React.FC = () => {
           </div>
         )}
       </main>
-      
+
       <Footer />
     </div>
   );

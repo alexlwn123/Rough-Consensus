@@ -1,7 +1,7 @@
-import React from 'react';
-import { VoteOption } from '../../types';
-import VoteCard from '../ui/VoteCard';
-import { useDebate } from '../../context/DebateContext';
+import React from "react";
+import { VoteOption } from "../../types";
+import VoteCard from "../ui/VoteCard";
+import { useDebate } from "../../context/DebateContext";
 
 interface VotingSectionProps {
   phase: "pre" | "post";
@@ -10,75 +10,74 @@ interface VotingSectionProps {
 const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
   const { debate, handleVote, userVote } = useDebate();
 
-  console.warn('userVote', userVote, debate);
-  
+  console.warn("userVote", userVote, debate);
+
   // Check if this phase is active
   const isActivePhase = debate?.currentPhase === phase;
-  
+
   // Get user's vote for this phase
-  const currentVote = phase === 'pre' ? userVote?.pre_vote : userVote?.post_vote;
+  const currentVote =
+    phase === "pre" ? userVote?.pre_vote : userVote?.post_vote;
 
   const didPreVote = userVote?.pre_vote !== null;
-  
+
   const handleVoteSelection = async (option: VoteOption) => {
     try {
       await handleVote(option);
     } catch (error) {
-      console.error('Error voting:', error);
+      console.error("Error voting:", error);
     }
   };
-  
+
   const getPhaseLabel = () => {
-    return phase === 'pre' ? 'Pre-Debate Vote' : 'Post-Debate Vote';
+    return phase === "pre" ? "Pre-Debate Vote" : "Post-Debate Vote";
   };
-  
+
   const getPhaseDescription = () => {
-    return phase === 'pre' 
-      ? 'Cast your vote before the debate begins' 
-      : 'After hearing the arguments, what is your position now?';
+    return phase === "pre"
+      ? "Cast your vote before the debate begins"
+      : "After hearing the arguments, what is your position now?";
   };
 
   return (
-    <div className={`border rounded-xl p-6 transition-all duration-300 ${isActivePhase ? 'bg-white shadow-md' : 'bg-gray-50'}`}>
+    <div
+      className={`border rounded-xl p-6 transition-all duration-300 ${isActivePhase ? "bg-white shadow-md" : "bg-gray-50"}`}
+    >
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">
-          {getPhaseLabel()}
-        </h2>
-        <p className="text-gray-600 mt-1">
-          {getPhaseDescription()}
-        </p>
+        <h2 className="text-2xl font-bold text-gray-800">{getPhaseLabel()}</h2>
+        <p className="text-gray-600 mt-1">{getPhaseDescription()}</p>
       </div>
-      
+
       <div className="space-y-4">
         <VoteCard
           option="for"
           label="For the Motion"
           description="I support the proposition being debated"
-          isSelected={currentVote === 'for'}
+          isSelected={currentVote === "for"}
           onVote={handleVoteSelection}
           disabled={!isActivePhase}
         />
-        
+
         <VoteCard
           option="against"
           label="Against the Motion"
           description="I oppose the proposition being debated"
-          isSelected={currentVote === 'against'}
+          isSelected={currentVote === "against"}
           onVote={handleVoteSelection}
           disabled={!isActivePhase}
         />
-        
+
         <VoteCard
           option="undecided"
           label="Undecided"
           description="I am neutral or undecided on this matter"
-          isSelected={currentVote === 'undecided'}
+          isSelected={currentVote === "undecided"}
           onVote={handleVoteSelection}
           disabled={!isActivePhase}
         />
       </div>
-      
-      {!isActivePhase && phase === 'pre' && (
+
+      {!isActivePhase && phase === "pre" && (
         <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
           <p className="text-blue-800 text-sm">
             The pre-debate voting phase is now closed.
@@ -86,18 +85,21 @@ const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
         </div>
       )}
 
-      {phase === 'post' && (!isActivePhase || !didPreVote) && (
+      {phase === "post" && (!isActivePhase || !didPreVote) && (
         <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
           <p className="text-blue-800 text-sm">
-            {!isActivePhase ? 'The post-debate voting phase is now closed.' : 'You did not vote in the pre-debate phase, so you cannot vote in the post-debate phase.'}
+            {!isActivePhase
+              ? "The post-debate voting phase is now closed."
+              : "You did not vote in the pre-debate phase, so you cannot vote in the post-debate phase."}
           </p>
         </div>
       )}
-      
+
       {isActivePhase && currentVote && (
         <div className="mt-4 p-3 bg-green-50 border border-green-100 rounded-md">
           <p className="text-green-800 text-sm">
-            Your vote has been recorded. You can change it at any time during this phase.
+            Your vote has been recorded. You can change it at any time during
+            this phase.
           </p>
         </div>
       )}
