@@ -7,13 +7,13 @@ import {
   subscribeToVoteCounts,
   subscribeToSankeyData
 } from '../services/voteService';
-import { DebateSession, VoteOption, SankeyData, Tally, Phase } from '../types';
+import { DebateSession, VoteOption, SankeyData, Tally, Phase, Vote } from '../types';
 import { useAuth } from './AuthContext';
 
 interface DebateContextType {
   debate: DebateSession | null;
   loading: boolean;
-  userVote: Record<string, any> | null;
+  userVote: Vote | null;
   voteCounts: Tally;
   sankeyData: SankeyData | null;
   handleVote: (option: VoteOption) => Promise<void>;
@@ -44,7 +44,7 @@ export const DebateProvider: React.FC<{
   const { currentUser } = useAuth();
   const [debate, setDebate] = useState<DebateSession | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userVote, setUserVote] = useState<Record<string, any> | null>(null);
+  const [userVote, setUserVote] = useState<Vote | null>(null);
   const [sankeyData, setSankeyData] = useState<SankeyData | null>(null);
   const [voteCounts, setVoteCounts] = useState<Tally>(defaultVoteCounts);
 
@@ -88,23 +88,6 @@ export const DebateProvider: React.FC<{
   useEffect(() => {
     if (!debateId || !currentUser) return;
 
-    // Create a subscription specifically for this user's votes
-    const subscription = supabase
-      .channel(`user_vote:${debateId}:${currentUser.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "votes",
-          filter: `debate_id=eq.${debateId} AND user_id=eq.${currentUser.id}`,
-        },
-        async (payload) => {
-          setUserVote(payload.new);
-        }
-      )
-      .subscribe();
-
     // Initial fetch of user's vote
     const fetchUserVote = async () => {
       try {
@@ -125,15 +108,17 @@ export const DebateProvider: React.FC<{
 
     fetchUserVote();
 
-    return () => {
-      supabase.removeChannel(subscription);
-    };
   }, [debateId, currentUser]);
 
   // Handle voting
   const handleVote = async (option: VoteOption) => {
     if (!currentUser || !debate) return;
-    
+
+    if (debate.currentPhase !== "pre" && debate.currentPhase !== "post") {
+      console.error("Voting is currently closed. Phase:", debate.currentPhase);
+      throw new Error("Voting is currently closed.");
+    }
+
     try {
       await castVote(debateId, currentUser.id, debate.currentPhase, option);
     } catch (error) {

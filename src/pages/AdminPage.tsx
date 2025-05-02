@@ -69,7 +69,7 @@ const AdminPage: React.FC = () => {
       const newDebate = {
         title: formData.title,
         description: formData.description,
-        current_phase: "scheduled",
+        current_phase: "scheduled" as const,
         created_by: currentUser.id,
       };
 

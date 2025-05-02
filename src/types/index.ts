@@ -1,10 +1,8 @@
+import { Enums, Tables } from "./Database.types";
+
 export type VoteOption = "for" | "against" | "undecided";
 
-export interface Vote {
-  userId: string;
-  option: VoteOption;
-  timestamp: number;
-}
+export type Vote = Tables<"votes">;
 
 export type CastedVote = {
   preDebate: { option: VoteOption };
@@ -29,7 +27,7 @@ export interface User {
   isAdmin?: boolean;
 }
 
-export type Phase = "pre" | "post" | "scheduled" | "finished" | "ongoing";
+export type Phase = Enums<"Debate Phase">;
 
 export interface DebateSession {
   id: string;

@@ -1,9 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
+import { Database } from "../types/Database.types";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     flowType: "pkce",
     autoRefreshToken: true,
@@ -57,15 +58,14 @@ export const checkIsAdmin = async (userId: string): Promise<boolean> => {
     }
 
     // If not found directly or there was an error, try the function approach
-    const { data: funcData, error: funcError } = await supabase.rpc('is_admin');
-    
+    const { data: funcData, error: funcError } = await supabase.rpc("is_admin");
+
     if (funcError) {
       console.error("Error calling is_admin function:", funcError);
       return false;
     }
-    
+
     return !!funcData; // Return result from the function
-    
   } catch (error) {
     console.error("Exception checking admin status:", error);
     return false;

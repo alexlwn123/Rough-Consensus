@@ -13,24 +13,28 @@ import {
 export const castVote = async (
   debateId: string,
   userId: string,
-  phase: Phase,
+  phase: "pre" | "post",
   option: VoteOption
 ) => {
   try {
     const vote: Vote = {
-      userId,
-      option,
-      timestamp: Date.now(),
+      user_id: userId,
+      debate_id: debateId,
+      post_vote: null,
+      pre_vote: null,
+      created_at: new Date().toISOString(),
+      id: crypto.randomUUID(),
+      [`${phase}_vote`]: { option },
     };
 
-    const { data, error } = await supabase.from("votes").upsert({
+    const { error } = await supabase.from("votes").upsert({
       debate_id: debateId,
       user_id: userId,
       [`${phase}_vote`]: vote,
     });
 
     if (error) throw error;
-    console.log("Vote casted", data);
+    console.log("Vote casted", vote);
     return true;
   } catch (error) {
     console.error("Error casting vote:", error);
@@ -83,33 +87,34 @@ export const subscribeToDebate = (
 // Get vote counts for a debate (server-side aggregation)
 export const getDebateVoteCounts = async (debateId: string): Promise<Tally> => {
   try {
-    const { data, error } = await supabase.rpc('get_debate_vote_counts', {
-      debate_id: debateId
+    const { data, error } = await supabase.rpc("get_debate_vote_counts", {
+      debate_id: debateId,
     });
 
     if (error) throw error;
-    
-    return data as Tally;
+    return data;
   } catch (error) {
     console.error("Error getting vote counts:", error);
     // Return empty counts as fallback
     return {
       pre: { for: 0, against: 0, undecided: 0 },
-      post: { for: 0, against: 0, undecided: 0 }
+      post: { for: 0, against: 0, undecided: 0 },
     };
   }
 };
 
 // Get Sankey data for a debate (server-side aggregation)
-export const getDebateSankeyData = async (debateId: string): Promise<SankeyData | null> => {
+export const getDebateSankeyData = async (
+  debateId: string
+): Promise<SankeyData | null> => {
   try {
-    const { data, error } = await supabase.rpc('get_debate_sankey_data', {
-      debate_id: debateId
+    const { data, error } = await supabase.rpc("get_debate_sankey_data", {
+      debate_id: debateId,
     });
 
     if (error) throw error;
-    
-    return data as SankeyData;
+
+    return data;
   } catch (error) {
     console.error("Error getting Sankey data:", error);
     return null;
@@ -123,7 +128,6 @@ export const subscribeToVoteCounts = (
 ) => {
   // Initial fetch
   getDebateVoteCounts(debateId).then(callback);
-  
   // Subscribe to changes
   const subscription = supabase
     .channel(`votes:${debateId}`)
@@ -155,7 +159,7 @@ export const subscribeToSankeyData = (
 ) => {
   // Initial fetch
   getDebateSankeyData(debateId).then(callback);
-  
+
   // Subscribe to changes
   const subscription = supabase
     .channel(`votes:${debateId}`)
