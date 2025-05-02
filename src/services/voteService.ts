@@ -3,7 +3,7 @@ import {
   Vote,
   VoteOption,
   Debate,
-  SankeyData,
+  DbSankeyData,
   CastedVote,
   Phase,
   Tally,
@@ -108,7 +108,7 @@ export const getDebateVoteCounts = async (debateId: string) => {
 // Get Sankey data for a debate (server-side aggregation)
 export const getDebateSankeyData = async (
   debateId: string
-): Promise<SankeyData | null> => {
+): Promise<DbSankeyData | null> => {
   try {
     const { data, error } = await supabase.rpc("get_debate_sankey_data", {
       debate_id: debateId,
@@ -157,7 +157,7 @@ export const subscribeToVoteCounts = (
 // Subscribe to Sankey data changes
 export const subscribeToSankeyData = (
   debateId: string,
-  callback: (sankeyData: SankeyData | null) => void
+  callback: (sankeyData: DbSankeyData | null) => void
 ) => {
   // Initial fetch
   getDebateSankeyData(debateId).then(callback);
@@ -187,7 +187,7 @@ export const subscribeToSankeyData = (
 };
 
 // Legacy client-side Sankey generator (for fallback if server functions fail)
-export const generateSankeyData = (votes: CastedVote[]): SankeyData => {
+export const generateSankeyData = (votes: CastedVote[]): DbSankeyData => {
   const nodes = [
     { name: "Pre: For" },
     { name: "Pre: Against" },
@@ -224,7 +224,7 @@ export const generateSankeyData = (votes: CastedVote[]): SankeyData => {
     }
   });
 
-  return { nodes, links, current_phase: "finished" } satisfies SankeyData;
+  return { nodes, links, current_phase: "finished" } satisfies DbSankeyData;
 };
 
 const getNodeIndex = (option: VoteOption): number => {

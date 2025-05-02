@@ -1,29 +1,31 @@
-import { supabase } from '../services/supabase';
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  subscribeToDebate, 
-  updateDebatePhase, 
+import { supabase } from "../services/supabase";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import {
+  subscribeToDebate,
+  updateDebatePhase,
   castVote,
   subscribeToVoteCounts,
-  subscribeToSankeyData
-} from '../services/voteService';
-import { Debate, VoteOption, SankeyData, Tally, Phase, Vote } from '../types';
-import { useAuth } from './AuthContext';
+  subscribeToSankeyData,
+} from "../services/voteService";
+import { Debate, VoteOption, DbSankeyData, Tally, Phase, Vote } from "../types";
+import { useAuth } from "./AuthContext";
 
 interface DebateContextType {
   debate: Debate | null;
   loading: boolean;
   userVote: Vote | null;
   voteCounts: Tally;
-  sankeyData: SankeyData | null;
+  sankeyData: DbSankeyData | null;
   handleVote: (option: VoteOption) => Promise<void>;
   changePhase: (phase: Phase) => Promise<void>;
 }
 
 const defaultVoteCounts = {
   pre: { for: 0, against: 0, undecided: 0 },
-  post: { for: 0, against: 0, undecided: 0 }
-};
+  post: { for: 0, against: 0, undecided: 0 },
+  total_voters: 0,
+  current_phase: null,
+} satisfies Tally;
 
 const DebateContext = createContext<DebateContextType>({
   debate: null,
@@ -37,7 +39,7 @@ const DebateContext = createContext<DebateContextType>({
 
 export const useDebate = () => useContext(DebateContext);
 
-export const DebateProvider: React.FC<{ 
+export const DebateProvider: React.FC<{
   children: React.ReactNode;
   debateId: string;
 }> = ({ children, debateId }) => {
@@ -45,7 +47,7 @@ export const DebateProvider: React.FC<{
   const [debate, setDebate] = useState<Debate | null>(null);
   const [loading, setLoading] = useState(true);
   const [userVote, setUserVote] = useState<Vote | null>(null);
-  const [sankeyData, setSankeyData] = useState<SankeyData | null>(null);
+  const [sankeyData, setSankeyData] = useState<DbSankeyData | null>(null);
   const [voteCounts, setVoteCounts] = useState<Tally>(defaultVoteCounts);
 
   // Subscribe to debate changes
@@ -107,7 +109,6 @@ export const DebateProvider: React.FC<{
     };
 
     fetchUserVote();
-
   }, [debateId, currentUser]);
 
   // Handle voting
@@ -130,7 +131,7 @@ export const DebateProvider: React.FC<{
   // Change debate phase
   const changePhase = async (phase: Phase) => {
     if (!debate) return;
-    
+
     try {
       await updateDebatePhase(debateId, phase);
     } catch (error) {
@@ -149,5 +150,7 @@ export const DebateProvider: React.FC<{
     changePhase,
   };
 
-  return <DebateContext.Provider value={value}>{children}</DebateContext.Provider>;
+  return (
+    <DebateContext.Provider value={value}>{children}</DebateContext.Provider>
+  );
 };

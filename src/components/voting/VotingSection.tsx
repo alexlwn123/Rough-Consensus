@@ -2,21 +2,23 @@ import React from 'react';
 import { VoteOption } from '../../types';
 import VoteCard from '../ui/VoteCard';
 import { useDebate } from '../../context/DebateContext';
-import { Phase } from '../../types';
 
 interface VotingSectionProps {
-  phase: Phase;
+  phase: "pre" | "post";
 }
 
 const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
   const { debate, handleVote, userVote } = useDebate();
 
+  console.warn('userVote', userVote, debate);
   
   // Check if this phase is active
   const isActivePhase = debate?.currentPhase === phase;
   
   // Get user's vote for this phase
-  const currentVote = userVote?.[`${phase}Debate`]?.option;
+  const currentVote = phase === 'pre' ? userVote?.pre_vote : userVote?.post_vote;
+
+  const didPreVote = userVote?.pre_vote !== null;
   
   const handleVoteSelection = async (option: VoteOption) => {
     try {
@@ -76,12 +78,18 @@ const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
         />
       </div>
       
-      {!isActivePhase && (
+      {!isActivePhase && phase === 'pre' && (
         <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
           <p className="text-blue-800 text-sm">
-            {phase === 'pre' 
-              ? 'The pre-debate voting phase is now closed.' 
-              : 'Post-debate voting is not yet active.'}
+            The pre-debate voting phase is now closed.
+          </p>
+        </div>
+      )}
+
+      {phase === 'post' && (!isActivePhase || !didPreVote) && (
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
+          <p className="text-blue-800 text-sm">
+            {!isActivePhase ? 'The post-debate voting phase is now closed.' : 'You did not vote in the pre-debate phase, so you cannot vote in the post-debate phase.'}
           </p>
         </div>
       )}
