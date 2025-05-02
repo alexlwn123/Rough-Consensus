@@ -2,7 +2,7 @@ import { supabase } from "./supabase";
 import {
   Vote,
   VoteOption,
-  DebateSession,
+  Debate,
   SankeyData,
   CastedVote,
   Phase,
@@ -61,7 +61,7 @@ export const updateDebatePhase = async (debateId: string, phase: Phase) => {
 // Subscribe to debate changes
 export const subscribeToDebate = (
   debateId: string,
-  callback: (debate: DebateSession) => void
+  callback: (debate: Debate) => void
 ) => {
   const subscription = supabase
     .channel(`debate:${debateId}`)
@@ -74,7 +74,7 @@ export const subscribeToDebate = (
         filter: `id=eq.${debateId}`,
       },
       (payload) => {
-        callback(payload.new as DebateSession);
+        callback(payload.new as Debate);
       }
     )
     .subscribe();

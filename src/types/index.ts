@@ -1,3 +1,4 @@
+import { Session } from "@supabase/supabase-js";
 import { Enums, Tables } from "./Database.types";
 
 export type VoteOption = "for" | "against" | "undecided";
@@ -27,21 +28,24 @@ export interface User {
   isAdmin?: boolean;
 }
 
+export type SessionUser = Session["user"];
+
 export type Phase = Enums<"Debate Phase">;
 
-export interface DebateSession {
-  id: string;
-  title: string;
-  description: string;
-  currentPhase: Phase;
-  startTime: number;
-  endTime?: number;
-  createdBy: string;
-  motion: string;
-  proDescription: string;
-  conDescription: string;
-  isDeleted: boolean;
-}
+export type DebateDb = Tables<"debates">;
+
+type CamelCase<S extends string> =
+  S extends `${infer P1}_${infer P2}${infer P3}`
+    ? `${Lowercase<P1>}${Uppercase<P2>}${CamelCase<P3>}`
+    : Lowercase<S>;
+
+type KeysToCamelCase<T> = {
+  [K in keyof T as CamelCase<string & K>]: T[K] extends object
+    ? KeysToCamelCase<T[K]>
+    : T[K];
+};
+
+export type Debate = KeysToCamelCase<DebateDb>;
 
 export interface SankeyLink {
   source: number;

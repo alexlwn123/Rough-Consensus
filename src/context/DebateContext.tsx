@@ -7,11 +7,11 @@ import {
   subscribeToVoteCounts,
   subscribeToSankeyData
 } from '../services/voteService';
-import { DebateSession, VoteOption, SankeyData, Tally, Phase, Vote } from '../types';
+import { Debate, VoteOption, SankeyData, Tally, Phase, Vote } from '../types';
 import { useAuth } from './AuthContext';
 
 interface DebateContextType {
-  debate: DebateSession | null;
+  debate: Debate | null;
   loading: boolean;
   userVote: Vote | null;
   voteCounts: Tally;
@@ -42,7 +42,7 @@ export const DebateProvider: React.FC<{
   debateId: string;
 }> = ({ children, debateId }) => {
   const { currentUser } = useAuth();
-  const [debate, setDebate] = useState<DebateSession | null>(null);
+  const [debate, setDebate] = useState<Debate | null>(null);
   const [loading, setLoading] = useState(true);
   const [userVote, setUserVote] = useState<Vote | null>(null);
   const [sankeyData, setSankeyData] = useState<SankeyData | null>(null);

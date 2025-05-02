@@ -1,10 +1,10 @@
 import React from 'react';
 import { Calendar, ArrowLeft, ArrowRight, CheckCircle, Clock, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { DebateSession, Phase } from '../../types';
+import { Debate, Phase } from '../../types';
 
 interface DebateListItemProps {
-  debate: DebateSession;
+  debate: Debate;
 }
 
 const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {

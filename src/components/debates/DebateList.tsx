@@ -1,10 +1,10 @@
 import React from 'react';
-import { DebateSession } from '../../types/index';
+import { Debate } from '../../types/index';
 import DebateListItem from './DebateListItem';
 
 interface DebateListProps {
   title: string;
-  debates: DebateSession[];
+  debates: Debate[];
   emptyMessage: string;
   status: 'ongoing' | 'upcoming' | 'past';
 }

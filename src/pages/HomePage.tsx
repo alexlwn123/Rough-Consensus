@@ -4,14 +4,14 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import GitHubLogin from '../components/auth/GitHubLogin';
 import DebateList from '../components/debates/DebateList';
-import { DebateSession } from '../types';
+import { Debate } from '../types';
 import { supabase } from '../services/supabase';
 import { coerceDebateListFromDb } from '../lib/utils';
 import bitcoinChatImage from '../assets/bitcoinchat.png';
 
 const HomePage: React.FC = () => {
   const { currentUser } = useAuth();
-  const [debates, setDebates] = useState<DebateSession[]>([]);
+  const [debates, setDebates] = useState<Debate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

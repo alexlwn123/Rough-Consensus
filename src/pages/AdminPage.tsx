@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { DebateSession, Phase } from "../types";
+import { Debate, Phase } from "../types";
 import { supabase } from "../services/supabase";
 import AdminPhaseController from "../components/admin/AdminPhaseController";
 import Header from "../components/layout/Header";
@@ -12,9 +12,9 @@ import Footer from "../components/layout/Footer";
 
 const AdminPage: React.FC = () => {
   const { currentUser, loading } = useAuth();
-  const [debates, setDebates] = useState<DebateSession[]>([]);
+  const [debates, setDebates] = useState<Debate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedDebate, setSelectedDebate] = useState<DebateSession | null>(
+  const [selectedDebate, setSelectedDebate] = useState<Debate | null>(
     null
   );
   const [showForm, setShowForm] = useState(false);
@@ -82,7 +82,7 @@ const AdminPage: React.FC = () => {
       if (error) throw error;
 
       // Add the new debate to the list
-      const mappedDebate: DebateSession = coerceDebateFromDb(data);
+      const mappedDebate: Debate = coerceDebateFromDb(data);
 
       setDebates([mappedDebate, ...debates]);
       setFormData({ title: "", description: "" });

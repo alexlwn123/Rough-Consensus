@@ -1,20 +1,16 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { DebateSession } from "../types";
+import { Debate, DebateDb } from "../types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-//TODO: Fix this
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function coerceDebateListFromDb(debates: any[]): DebateSession[] {
+export function coerceDebateListFromDb(debates: DebateDb[]): Debate[] {
   return debates.map(coerceDebateFromDb);
 }
 
-//TODO: Fix this
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function coerceDebateFromDb(debate: any): DebateSession {
+export function coerceDebateFromDb(debate: DebateDb): Debate {
   return {
     id: debate.id,
     title: debate.title,
@@ -23,6 +19,7 @@ export function coerceDebateFromDb(debate: any): DebateSession {
     startTime: debate.start_time,
     endTime: debate.end_time,
     createdBy: debate.created_by,
+    createdAt: debate.created_at,
     motion: debate.motion,
     proDescription: debate.pro_description,
     conDescription: debate.con_description,
