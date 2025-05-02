@@ -1,37 +1,31 @@
+alter table "public"."votes" alter column "debate_id" set not null;
+
+alter table "public"."votes" alter column "user_id" set not null;
+
 set check_function_bodies = off;
-
-create type "public"."phase_counts" as ("for" integer, "against" integer, "undecided" integer);
-
-create type "public"."sankey_link" as ("source" integer, "target" integer, "value" integer);
-
-create type "public"."sankey_node" as ("name" text);
-
-create type "public"."debate_sankey_data" as ("nodes" sankey_node[], "links" sankey_link[], "current_phase" "Debate Phase");
-
-create type "public"."debate_vote_counts" as ("pre" phase_counts, "post" phase_counts, "total_voters" integer, "current_phase" "Debate Phase");
 
 CREATE OR REPLACE FUNCTION public.get_debate_sankey_data(debate_id uuid)
  RETURNS debate_sankey_data
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO 'public'
-AS $function$
-DECLARE
+AS $function$DECLARE
   debate_exists BOOLEAN;
   nodes sankey_node[];
   links sankey_link[];
   debate_phase "Debate Phase";
   result debate_sankey_data;
+   _debate_id UUID := debate_id;
 BEGIN
   -- Check if debate exists and get current phase
   SELECT EXISTS(
-    SELECT 1 FROM debates WHERE id = debate_id
+    SELECT 1 FROM debates WHERE id = _debate_id
   ),
-  (SELECT current_phase FROM debates WHERE id = debate_id)
+  (SELECT current_phase FROM debates WHERE id = _debate_id)
   INTO debate_exists, debate_phase;
   
   IF NOT debate_exists THEN
-    RAISE EXCEPTION 'Debate with ID % does not exist', debate_id;
+    RAISE EXCEPTION 'Debate with ID % does not exist', _debate_id;
   END IF;
 
   -- Build nodes
@@ -61,7 +55,7 @@ BEGIN
       END AS target,
       COUNT(*) AS value
     FROM votes v
-    WHERE v.debate_id = debate_id
+    WHERE v.debate_id = _debate_id
       AND v.pre_vote IS NOT NULL
       AND v.post_vote IS NOT NULL
     GROUP BY source, target
@@ -71,8 +65,7 @@ BEGIN
   result := ROW(nodes, links, debate_phase);
 
   RETURN result;
-END;
-$function$
+END;$function$
 ;
 
 CREATE OR REPLACE FUNCTION public.get_debate_vote_counts(debate_id uuid)
@@ -80,24 +73,24 @@ CREATE OR REPLACE FUNCTION public.get_debate_vote_counts(debate_id uuid)
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO 'public'
-AS $function$
-DECLARE
+AS $function$DECLARE
   debate_exists BOOLEAN;
   pre_counts phase_counts;
   post_counts phase_counts;
   total_voters integer;
   debate_phase "Debate Phase";
   result debate_vote_counts;
+  _debate_id UUID := debate_id;
 BEGIN
   -- Check if debate exists and get current phase
   SELECT EXISTS(
-    SELECT 1 FROM debates WHERE id = debate_id
+    SELECT 1 FROM debates WHERE id = _debate_id
   ), 
-  (SELECT current_phase FROM debates WHERE id = debate_id)
+  (SELECT current_phase FROM debates WHERE id = _debate_id)
   INTO debate_exists, debate_phase;
   
   IF NOT debate_exists THEN
-    RAISE EXCEPTION 'Debate with ID % does not exist', debate_id;
+    RAISE EXCEPTION 'Debate with ID % does not exist', _debate_id;
   END IF;
 
   -- Pre-vote counts
@@ -107,7 +100,7 @@ BEGIN
     COUNT(v.pre_vote) FILTER (WHERE v.pre_vote->>'option' = 'undecided')
   INTO pre_counts
   FROM votes v
-  WHERE v.debate_id = debate_id;
+  WHERE v.debate_id = _debate_id;
 
   -- Post-vote counts
   SELECT
@@ -116,20 +109,19 @@ BEGIN
     COUNT(v.post_vote) FILTER (WHERE v.post_vote->>'option' = 'undecided')
   INTO post_counts
   FROM votes v
-  WHERE v.debate_id = debate_id;
+  WHERE v.debate_id = _debate_id;
 
   -- Total voters
   SELECT COUNT(DISTINCT v.user_id)
   INTO total_voters
   FROM votes v
-  WHERE v.debate_id = debate_id;
+  WHERE v.debate_id = _debate_id;
 
   -- Build result
   result := ROW(pre_counts, post_counts, total_voters, debate_phase);
 
   RETURN result;
-END;
-$function$
+END;$function$
 ;
 
 

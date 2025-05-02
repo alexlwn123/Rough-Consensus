@@ -78,27 +78,27 @@ export type Database = {
       votes: {
         Row: {
           created_at: string
-          debate_id: string | null
+          debate_id: string
           id: string
           post_vote: Json | null
           pre_vote: Json | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
-          debate_id?: string | null
+          debate_id: string
           id?: string
           post_vote?: Json | null
           pre_vote?: Json | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
-          debate_id?: string | null
+          debate_id?: string
           id?: string
           post_vote?: Json | null
           pre_vote?: Json | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
