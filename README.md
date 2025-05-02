@@ -1,9 +1,8 @@
 # Rough Consensus - Debate Voting Platform for Bitcoin Events
 
-> Where great minds don't think alike.
+> Where great minds don't think alike
 
-
-Rough Consensus is a modern web platform designed to facilitate structured debates and voting. It provides a space for meaningful discussions where participants can engage in debates, vote on outcomes, and reach consensus through structured dialogue.
+**Rough Consensus** is a platform to facilitate live judging for oxford-style debates.
 
 While developed for Bitcoin++ conferences, this certainly can be used for other debate topics. Aside from branding, there's nothing bitcoin related in the tool.
 
@@ -17,6 +16,7 @@ While developed for Bitcoin++ conferences, this certainly can be used for other 
 
 ## Tech Stack
 
+- **Vibes**: bolt.new + Claude Code + Cursor
 - **Frontend**: React + TypeScript
 - **Styling**: TailwindCSS
 - **Backend**: Supabase
@@ -34,7 +34,7 @@ cd debate-voting
 
 2. Install dependencies:
 ```bash
-npm install
+pnpm install
 ```
 
 3. Set up environment variables:
