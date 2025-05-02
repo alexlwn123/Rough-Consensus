@@ -57,7 +57,7 @@ const HomePage: React.FC = () => {
     <div
       className={`min-h-screen flex flex-col ${
         !currentUser
-          ? "bg-gradient-to-b from-blue-900 to-indigo-800 h-screen"
+          ? "bg-gradient-to-b from-blue-900 to-indigo-800"
           : "bg-gradient-to-b from-gray-50 to-white"
       }`}
     >
@@ -65,14 +65,14 @@ const HomePage: React.FC = () => {
         <Header title="Rough Consensus" debateTitle="Debate Voting Platform" />
       )}
 
-      <main className={!currentUser ? "h-[calc(100vh-64px)] flex-grow" : "flex-grow"}>
+      <main className={!currentUser ? "flex-grow" : "flex-grow"}>
         {!currentUser ? (
           <div className="h-full flex flex-col items-center px-4">
             <div className="w-full flex justify-center mt-10">
               <img
                 src={bitcoinChatImage}
                 alt="Bitcoin Chat"
-                className="w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-xl"
+                className="w-48 md:w-80 md:h-80 object-contain drop-shadow-xl"
                 aria-hidden="true"
               />
             </div>
