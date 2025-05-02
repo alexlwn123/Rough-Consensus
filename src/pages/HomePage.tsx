@@ -65,7 +65,7 @@ const HomePage: React.FC = () => {
         <Header title="Rough Consensus" debateTitle="Debate Voting Platform" />
       )}
 
-      <main className={!currentUser ? "flex-grow" : "flex-grow"}>
+      <main className={!currentUser ? "flex-grow min-h-screen" : "flex-grow"}>
         {!currentUser ? (
           <div className="h-full flex flex-col items-center px-4">
             <div className="w-full flex justify-center mt-10">

@@ -5,6 +5,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="w-full py-4 px-4 mt-auto">
+      <div className="border-t border-gray-100/10 pt-4 mx-auto px-8" />
       <div className="container mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
         <a
           href="https://github.com/alexlwn123/rough-consensus"
@@ -25,9 +26,9 @@ const Footer: React.FC = () => {
               clipRule="evenodd"
             />
           </svg>
-          <span>View on GitHub</span>
+          <span>Made with vibes</span>
         </a>
-        <span className="text-sm text-gray-400" aria-label="Copyright">
+        <span className="text-sm text-gray-500" aria-label="Copyright">
           © {currentYear} Rough Consensus
         </span>
       </div>
