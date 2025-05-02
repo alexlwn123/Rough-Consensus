@@ -1,10 +1,11 @@
+import { supabase } from '../services/supabase';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   subscribeToDebate, 
-  subscribeToVotes, 
   updateDebatePhase, 
   castVote,
-  generateSankeyData
+  subscribeToVoteCounts,
+  subscribeToSankeyData
 } from '../services/voteService';
 import { DebateSession, VoteOption, SankeyData, Tally, Phase } from '../types';
 import { useAuth } from './AuthContext';
@@ -12,17 +13,9 @@ import { useAuth } from './AuthContext';
 interface DebateContextType {
   debate: DebateSession | null;
   loading: boolean;
-  //TODO: Fix this
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userVote: Record<string, any> | null;
-  //TODO: Fix this
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  allVotes: Record<string, any>[];
+  voteCounts: Tally;
   sankeyData: SankeyData | null;
-  voteCounts: {
-    pre: Record<VoteOption, number>;
-    post: Record<VoteOption, number>;
-  };
   handleVote: (option: VoteOption) => Promise<void>;
   changePhase: (phase: Phase) => Promise<void>;
 }
@@ -36,9 +29,8 @@ const DebateContext = createContext<DebateContextType>({
   debate: null,
   loading: true,
   userVote: null,
-  allVotes: [],
-  sankeyData: null,
   voteCounts: defaultVoteCounts,
+  sankeyData: null,
   handleVote: async () => {},
   changePhase: async () => {},
 });
@@ -52,9 +44,9 @@ export const DebateProvider: React.FC<{
   const { currentUser } = useAuth();
   const [debate, setDebate] = useState<DebateSession | null>(null);
   const [loading, setLoading] = useState(true);
-  const [allVotes, setAllVotes] = useState<Record<string, any>[]>([]);
+  const [userVote, setUserVote] = useState<Record<string, any> | null>(null);
   const [sankeyData, setSankeyData] = useState<SankeyData | null>(null);
-  const [voteCounts, setVoteCounts] = useState(defaultVoteCounts);
+  const [voteCounts, setVoteCounts] = useState<Tally>(defaultVoteCounts);
 
   // Subscribe to debate changes
   useEffect(() => {
@@ -68,46 +60,75 @@ export const DebateProvider: React.FC<{
     return () => unsubscribe();
   }, [debateId]);
 
-  // Subscribe to votes
+  // Subscribe to vote counts (aggregated on server)
   useEffect(() => {
     if (!debateId) return;
 
-    const unsubscribe = subscribeToVotes(debateId, (votes) => {
-      setAllVotes(votes);
-      
-      // Generate Sankey data
-      if (votes.length > 0) {
-        const data = generateSankeyData(votes);
-        setSankeyData(data);
-      }
-
-      
-      // Calculate vote counts
-      const counts = {
-        pre: { for: 0, against: 0, undecided: 0 },
-        post: { for: 0, against: 0, undecided: 0 }
-      } satisfies Tally;
-
-      
-      votes.forEach(vote => {
-        if (vote.preDebate) {
-          counts.pre[vote.preDebate.option] += 1;
-        }
-        if (vote.postDebate) {
-          counts.post[vote.postDebate.option] += 1;
-        }
-      });
-
-      const fakeCounts = {
-        pre: { for: 100, against: 100, undecided: 100 },
-        post: { for: 100, against: 100, undecided: 100 }
-      }
-      
-      setVoteCounts(fakeCounts);
+    const unsubscribe = subscribeToVoteCounts(debateId, (counts) => {
+      setVoteCounts(counts);
     });
 
     return () => unsubscribe();
   }, [debateId]);
+
+  // Subscribe to Sankey data (aggregated on server)
+  useEffect(() => {
+    if (!debateId) return;
+
+    const unsubscribe = subscribeToSankeyData(debateId, (data) => {
+      if (data) {
+        setSankeyData(data);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [debateId]);
+
+  // Subscribe to user's own vote (for personal feedback)
+  useEffect(() => {
+    if (!debateId || !currentUser) return;
+
+    // Create a subscription specifically for this user's votes
+    const subscription = supabase
+      .channel(`user_vote:${debateId}:${currentUser.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "votes",
+          filter: `debate_id=eq.${debateId} AND user_id=eq.${currentUser.id}`,
+        },
+        async (payload) => {
+          setUserVote(payload.new);
+        }
+      )
+      .subscribe();
+
+    // Initial fetch of user's vote
+    const fetchUserVote = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("votes")
+          .select("*")
+          .eq("debate_id", debateId)
+          .eq("user_id", currentUser.id)
+          .maybeSingle();
+
+        if (!error && data) {
+          setUserVote(data);
+        }
+      } catch (error) {
+        console.error("Error fetching user vote:", error);
+      }
+    };
+
+    fetchUserVote();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [debateId, currentUser]);
 
   // Handle voting
   const handleVote = async (option: VoteOption) => {
@@ -133,22 +154,15 @@ export const DebateProvider: React.FC<{
     }
   };
 
-  // Get the current user's vote
-  const userVote = currentUser 
-    ? allVotes.find(vote => vote.id === currentUser.id) || null
-    : null;
-
   const value = {
     debate,
     loading,
     userVote,
-    allVotes,
-    sankeyData,
     voteCounts,
+    sankeyData,
     handleVote,
     changePhase,
   };
-  console.warn('context', value);
 
   return <DebateContext.Provider value={value}>{children}</DebateContext.Provider>;
 };

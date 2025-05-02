@@ -6,6 +6,7 @@ import {
   SankeyData,
   CastedVote,
   Phase,
+  Tally,
 } from "../types";
 
 // Cast a vote
@@ -79,11 +80,51 @@ export const subscribeToDebate = (
   };
 };
 
-// Subscribe to votes
-export const subscribeToVotes = (
+// Get vote counts for a debate (server-side aggregation)
+export const getDebateVoteCounts = async (debateId: string): Promise<Tally> => {
+  try {
+    const { data, error } = await supabase.rpc('get_debate_vote_counts', {
+      debate_id: debateId
+    });
+
+    if (error) throw error;
+    
+    return data as Tally;
+  } catch (error) {
+    console.error("Error getting vote counts:", error);
+    // Return empty counts as fallback
+    return {
+      pre: { for: 0, against: 0, undecided: 0 },
+      post: { for: 0, against: 0, undecided: 0 }
+    };
+  }
+};
+
+// Get Sankey data for a debate (server-side aggregation)
+export const getDebateSankeyData = async (debateId: string): Promise<SankeyData | null> => {
+  try {
+    const { data, error } = await supabase.rpc('get_debate_sankey_data', {
+      debate_id: debateId
+    });
+
+    if (error) throw error;
+    
+    return data as SankeyData;
+  } catch (error) {
+    console.error("Error getting Sankey data:", error);
+    return null;
+  }
+};
+
+// Subscribe to vote count changes
+export const subscribeToVoteCounts = (
   debateId: string,
-  callback: (votes: CastedVote[]) => void
+  callback: (voteCounts: Tally) => void
 ) => {
+  // Initial fetch
+  getDebateVoteCounts(debateId).then(callback);
+  
+  // Subscribe to changes
   const subscription = supabase
     .channel(`votes:${debateId}`)
     .on(
@@ -95,15 +136,9 @@ export const subscribeToVotes = (
         filter: `debate_id=eq.${debateId}`,
       },
       async () => {
-        // Fetch all votes for this debate
-        const { data, error } = await supabase
-          .from("votes")
-          .select("*")
-          .eq("debate_id", debateId);
-
-        if (!error && data) {
-          callback(data);
-        }
+        // Get updated counts when votes change
+        const counts = await getDebateVoteCounts(debateId);
+        callback(counts);
       }
     )
     .subscribe();
@@ -113,7 +148,39 @@ export const subscribeToVotes = (
   };
 };
 
-// Generate Sankey data from votes
+// Subscribe to Sankey data changes
+export const subscribeToSankeyData = (
+  debateId: string,
+  callback: (sankeyData: SankeyData | null) => void
+) => {
+  // Initial fetch
+  getDebateSankeyData(debateId).then(callback);
+  
+  // Subscribe to changes
+  const subscription = supabase
+    .channel(`votes:${debateId}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "votes",
+        filter: `debate_id=eq.${debateId}`,
+      },
+      async () => {
+        // Get updated Sankey data when votes change
+        const sankeyData = await getDebateSankeyData(debateId);
+        callback(sankeyData);
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(subscription);
+  };
+};
+
+// Legacy client-side Sankey generator (for fallback if server functions fail)
 export const generateSankeyData = (votes: CastedVote[]): SankeyData => {
   const nodes = [
     { name: "Pre: For" },

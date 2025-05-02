@@ -1,31 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { DebateProvider } from '../context/DebateContext';
 import Header from '../components/layout/Header';
 import VotingSection from '../components/voting/VotingSection';
 import ResultsPanel from '../components/results/ResultsPanel';
-import PhaseController from '../components/admin/PhaseController';
 import Footer from '../components/layout/Footer';
 
 const DebatePage: React.FC = () => {
   const { debateId } = useParams<{ debateId: string }>();
   const { currentUser, loading } = useAuth();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  
-  // In a real app, you would check if the current user is the debate creator
-  useEffect(() => {
-    // For demo purposes, we'll say the first user to access the page is the admin
-    if (currentUser) {
-      const checkIsAdmin = async () => {
-        setIsAdmin(true);
-        console.warn('currentUser', currentUser);
-      };
-      
-      checkIsAdmin();
-    }
-  }, [currentUser]);
   
   if (loading) {
     return (
@@ -60,7 +44,6 @@ const DebatePage: React.FC = () => {
         />
         
         <div className="container mx-auto px-4 py-8">
-          <PhaseController isAdmin={isAdmin} />
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <VotingSection phase="pre" />
