@@ -1,5 +1,5 @@
 import { fetchDebate, supabase } from "../services/supabase";
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   subscribeToDebate,
   updateDebatePhase,
@@ -10,8 +10,9 @@ import {
 import { Debate, VoteOption, DbSankeyData, Tally, Phase, Vote } from "../types";
 import { useAuth } from "./AuthContext";
 import { coerceDebateFromDb } from "../lib/utils";
+import { DebateContext } from "./useDebate";
 
-type DebateContextType = {
+export type DebateContextType = {
   debate: Debate | null;
   loading: boolean;
   userVote: Vote | null;
@@ -27,18 +28,6 @@ const defaultVoteCounts = {
   total_voters: 0,
   current_phase: null,
 } satisfies Tally;
-
-const DebateContext = createContext<DebateContextType>({
-  debate: null,
-  loading: true,
-  userVote: null,
-  voteCounts: defaultVoteCounts,
-  sankeyData: null,
-  handleVote: async () => {},
-  changePhase: async () => {},
-});
-
-export const useDebate = () => useContext(DebateContext);
 
 export const DebateProvider: React.FC<{
   children: React.ReactNode;

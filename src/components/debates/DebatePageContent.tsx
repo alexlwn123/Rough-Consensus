@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { DebateProvider, useDebate } from "../../context/DebateContext";
+import { useDebate } from "../../context/useDebate";
 import Header from "../layout/Header";
 import VotingSection from "../voting/VotingSection";
 import ResultsPanel from "../results/ResultsPanel";
@@ -37,24 +37,22 @@ const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
   }
 
   return (
-    <DebateProvider debateId={debateId}>
-      <div className="min-h-screen bg-gray-50">
-        <Header
-          title={debate?.currentPhase ?? "Debate"}
-          debateTitle={debate?.title ?? ""}
-        />
+    <div className="min-h-screen bg-gray-50">
+      <Header
+        title={debate?.currentPhase ?? "Debate"}
+        debateTitle={debate?.title ?? ""}
+      />
 
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <VotingSection phase="pre" />
-            <VotingSection phase="post" />
-          </div>
-
-          <ResultsPanel />
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <VotingSection phase="pre" />
+          <VotingSection phase="post" />
         </div>
-        <Footer />
+
+        <ResultsPanel />
       </div>
-    </DebateProvider>
+      <Footer />
+    </div>
   );
 };
 
