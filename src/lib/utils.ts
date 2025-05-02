@@ -6,10 +6,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+//TODO: Fix this
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function coerceDebateListFromDb(debates: any[]): DebateSession[] {
   return debates.map(coerceDebateFromDb);
 }
 
+//TODO: Fix this
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function coerceDebateFromDb(debate: any): DebateSession {
   return {
     id: debate.id,

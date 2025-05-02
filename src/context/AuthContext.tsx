@@ -22,6 +22,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  //TODO: Fix this
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setUserWithAdminCheck = async (sessionUser: any) => {
     const isAdmin = await checkIsAdmin(sessionUser.id);
     

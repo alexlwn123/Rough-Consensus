@@ -29,6 +29,7 @@ export const castVote = async (
     });
 
     if (error) throw error;
+    console.log("Vote casted", data);
     return true;
   } catch (error) {
     console.error("Error casting vote:", error);

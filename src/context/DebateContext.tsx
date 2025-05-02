@@ -12,7 +12,11 @@ import { useAuth } from './AuthContext';
 interface DebateContextType {
   debate: DebateSession | null;
   loading: boolean;
+  //TODO: Fix this
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userVote: Record<string, any> | null;
+  //TODO: Fix this
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   allVotes: Record<string, any>[];
   sankeyData: SankeyData | null;
   voteCounts: {
