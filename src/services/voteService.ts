@@ -17,21 +17,13 @@ export const castVote = async (
   option: VoteOption
 ) => {
   try {
-    const vote: Vote = {
+    const vote = {
       user_id: userId,
       debate_id: debateId,
-      post_vote: null,
-      pre_vote: null,
-      created_at: new Date().toISOString(),
-      id: crypto.randomUUID(),
       [`${phase}_vote`]: { option },
-    };
+    } satisfies Partial<Vote>;
 
-    const { error } = await supabase.from("votes").upsert({
-      debate_id: debateId,
-      user_id: userId,
-      [`${phase}_vote`]: vote,
-    });
+    const { error } = await supabase.from("votes").upsert(vote);
 
     if (error) throw error;
     console.log("Vote casted", vote);

@@ -10,16 +10,14 @@ interface VotingSectionProps {
 const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
   const { debate, handleVote, userVote } = useDebate();
 
-  console.warn("userVote", userVote, debate);
-
   // Check if this phase is active
   const isActivePhase = debate?.currentPhase === phase;
+  const didPreVote = !!userVote?.pre_vote;
+  const canVote = isActivePhase && (phase === "pre" || didPreVote);
 
   // Get user's vote for this phase
   const currentVote =
     phase === "pre" ? userVote?.pre_vote : userVote?.post_vote;
-
-  const didPreVote = userVote?.pre_vote !== null;
 
   const handleVoteSelection = async (option: VoteOption) => {
     try {
@@ -41,7 +39,7 @@ const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
 
   return (
     <div
-      className={`border rounded-xl p-6 transition-all duration-300 ${isActivePhase ? "bg-white shadow-md" : "bg-gray-50"}`}
+      className={`border rounded-xl p-6 transition-all duration-300 ${canVote ? "bg-white shadow-md" : "bg-gray-50"}`}
     >
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800">{getPhaseLabel()}</h2>
@@ -55,7 +53,7 @@ const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
           description="I support the proposition being debated"
           isSelected={currentVote === "for"}
           onVote={handleVoteSelection}
-          disabled={!isActivePhase}
+          disabled={!canVote}
         />
 
         <VoteCard
@@ -64,7 +62,7 @@ const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
           description="I oppose the proposition being debated"
           isSelected={currentVote === "against"}
           onVote={handleVoteSelection}
-          disabled={!isActivePhase}
+          disabled={!canVote}
         />
 
         <VoteCard
@@ -73,7 +71,7 @@ const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
           description="I am neutral or undecided on this matter"
           isSelected={currentVote === "undecided"}
           onVote={handleVoteSelection}
-          disabled={!isActivePhase}
+          disabled={!canVote}
         />
       </div>
 

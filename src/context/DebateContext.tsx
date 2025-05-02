@@ -11,7 +11,7 @@ import { Debate, VoteOption, DbSankeyData, Tally, Phase, Vote } from "../types";
 import { useAuth } from "./AuthContext";
 import { coerceDebateFromDb } from "../lib/utils";
 
-interface DebateContextType {
+type DebateContextType = {
   debate: Debate | null;
   loading: boolean;
   userVote: Vote | null;
@@ -19,7 +19,7 @@ interface DebateContextType {
   sankeyData: DbSankeyData | null;
   handleVote: (option: VoteOption) => Promise<void>;
   changePhase: (phase: Phase) => Promise<void>;
-}
+};
 
 const defaultVoteCounts = {
   pre: { for: 0, against: 0, undecided: 0 },

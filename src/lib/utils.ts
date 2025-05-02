@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Debate, DebateDb } from "../types";
+import { Debate, DebateDb, Phase } from "../types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -25,4 +25,21 @@ export function coerceDebateFromDb(debate: DebateDb): Debate {
     conDescription: debate.con_description,
     isDeleted: debate.is_deleted,
   };
+}
+
+export function getPhaseDisplay(phase: Phase): string {
+  switch (phase) {
+    case "scheduled":
+      return "Scheduled";
+    case "pre":
+      return "Pre-Debate";
+    case "ongoing":
+      return "Ongoing";
+    case "post":
+      return "Post-Debate";
+    case "finished":
+      return "Finished";
+    default:
+      return "Unknown";
+  }
 }

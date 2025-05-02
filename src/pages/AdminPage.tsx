@@ -7,7 +7,11 @@ import AdminPhaseController from "../components/admin/AdminPhaseController";
 import Header from "../components/layout/Header";
 import Button from "../components/ui/Button";
 import { Trash2 } from "lucide-react";
-import { coerceDebateFromDb, coerceDebateListFromDb } from "../lib/utils";
+import {
+  coerceDebateFromDb,
+  coerceDebateListFromDb,
+  getPhaseDisplay,
+} from "../lib/utils";
 import Footer from "../components/layout/Footer";
 
 const AdminPage: React.FC = () => {
@@ -102,8 +106,8 @@ const AdminPage: React.FC = () => {
       // Update local state
       setDebates(
         debates.map((debate) =>
-          debate.id === debateId ? { ...debate, currentPhase: phase } : debate,
-        ),
+          debate.id === debateId ? { ...debate, currentPhase: phase } : debate
+        )
       );
 
       if (selectedDebate && selectedDebate.id === debateId) {
@@ -223,15 +227,7 @@ const AdminPage: React.FC = () => {
                               : "bg-gray-100 text-gray-800"
                       }`}
                     >
-                      {debate.currentPhase === "scheduled"
-                        ? "Scheduled"
-                        : debate.currentPhase === "pre"
-                          ? "Pre-Debate"
-                          : debate.currentPhase === "ongoing"
-                            ? "Ongoing"
-                            : debate.currentPhase === "post"
-                              ? "Post-Debate"
-                              : "Finished"}
+                      {getPhaseDisplay(debate.currentPhase)}
                     </span>
                     <span className="text-sm text-gray-500">
                       {new Date(debate.startTime).toLocaleDateString()}
