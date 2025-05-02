@@ -8,6 +8,7 @@ import Header from "../components/layout/Header";
 import Button from "../components/ui/Button";
 import { Trash2 } from "lucide-react";
 import { coerceDebateFromDb, coerceDebateListFromDb } from "../lib/utils";
+import Footer from "../components/layout/Footer";
 
 const AdminPage: React.FC = () => {
   const { currentUser, loading } = useAuth();
@@ -249,6 +250,7 @@ const AdminPage: React.FC = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

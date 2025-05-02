@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
 import GitHubLogin from '../components/auth/GitHubLogin';
 import DebateList from '../components/debates/DebateList';
 import { DebateSession } from '../types';
@@ -54,7 +55,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div
-      className={`min-h-screen ${
+      className={`min-h-screen flex flex-col ${
         !currentUser
           ? "bg-gradient-to-b from-blue-900 to-indigo-800"
           : "bg-gradient-to-b from-gray-50 to-white"
@@ -64,7 +65,7 @@ const HomePage: React.FC = () => {
         <Header title="Rough Consensus" debateTitle="Debate Voting Platform" />
       )}
 
-      <main className={!currentUser ? "h-[calc(100vh-64px)]" : ""}>
+      <main className={!currentUser ? "h-[calc(100vh-64px)] flex-grow" : "flex-grow"}>
         {!currentUser ? (
           <div className="h-full flex flex-col items-center px-4">
             <div className="w-full flex justify-center mt-10">
@@ -151,6 +152,8 @@ const HomePage: React.FC = () => {
           </div>
         )}
       </main>
+      
+      <Footer />
     </div>
   );
 };

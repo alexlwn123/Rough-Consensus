@@ -6,6 +6,7 @@ import Header from '../components/layout/Header';
 import VotingSection from '../components/voting/VotingSection';
 import ResultsPanel from '../components/results/ResultsPanel';
 import PhaseController from '../components/admin/PhaseController';
+import Footer from '../components/layout/Footer';
 
 const DebatePage: React.FC = () => {
   const { debateId } = useParams<{ debateId: string }>();
@@ -68,6 +69,7 @@ const DebatePage: React.FC = () => {
           
           <ResultsPanel />
         </div>
+      <Footer />
       </div>
     </DebateProvider>
   );
