@@ -57,7 +57,7 @@ const HomePage: React.FC = () => {
     <div
       className={`min-h-screen flex flex-col ${
         !currentUser
-          ? "bg-gradient-to-b from-blue-900 to-indigo-800"
+          ? "bg-gradient-to-b from-blue-900 to-indigo-800 h-screen"
           : "bg-gradient-to-b from-gray-50 to-white"
       }`}
     >
@@ -81,8 +81,8 @@ const HomePage: React.FC = () => {
                 <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
                   Rough Consensus
                 </h1>
-                <p className="text-xl font-medium text-blue-100">
-                  Where great minds don't think alike.
+                <p className="text-xl font-medium text-blue-100 italic">
+                  Where great minds don't think alike
                 </p>
               </div>
               <div className="mt-12 max-w-md mx-auto my-auto">
@@ -95,7 +95,7 @@ const HomePage: React.FC = () => {
         ) : (
           <div className="container mx-auto px-4 py-4">
             <p className="text-md font-medium italic text-gray-800 mb-2 text-center">
-              Where great minds don't think alike.
+              Where great minds don't think alike
             </p>
             <div className="max-w-7xl mx-auto">
               {isLoading ? (
