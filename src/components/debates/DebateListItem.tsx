@@ -2,6 +2,7 @@ import React from 'react';
 import { Calendar, ArrowLeft, ArrowRight, CheckCircle, Clock, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Debate, Phase } from '../../types';
+import { Live } from '../ui/Live';
 
 interface DebateListItemProps {
   debate: Debate;
@@ -42,6 +43,14 @@ const DebateListItem: React.FC<DebateListItemProps> = ({ debate }) => {
           textColor: 'text-gray-800',
           borderColor: 'border-gray-200'
         };
+      case 'ongoing':
+        return { 
+          text: 'Debate in Progress', 
+          Icon: Live,
+          bgColor: 'bg-gray-100',
+          textColor: 'text-gray-800',
+          borderColor: 'border-gray-200'
+        }
       default:
         return { 
           text: 'Unknown', 

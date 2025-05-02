@@ -115,13 +115,43 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_debate_sankey_data: {
+        Args: { debate_id: string }
+        Returns: Database["public"]["CompositeTypes"]["debate_sankey_data"]
+      }
+      get_debate_vote_counts: {
+        Args: { debate_id: string }
+        Returns: Database["public"]["CompositeTypes"]["debate_vote_counts"]
+      }
     }
     Enums: {
       "Debate Phase": "pre" | "post" | "scheduled" | "finished" | "ongoing"
     }
     CompositeTypes: {
-      [_ in never]: never
+      debate_sankey_data: {
+        nodes: Database["public"]["CompositeTypes"]["sankey_node"][] | null
+        links: Database["public"]["CompositeTypes"]["sankey_link"][] | null
+        current_phase: Database["public"]["Enums"]["Debate Phase"] | null
+      }
+      debate_vote_counts: {
+        pre: Database["public"]["CompositeTypes"]["phase_counts"] | null
+        post: Database["public"]["CompositeTypes"]["phase_counts"] | null
+        total_voters: number | null
+        current_phase: Database["public"]["Enums"]["Debate Phase"] | null
+      }
+      phase_counts: {
+        for: number | null
+        against: number | null
+        undecided: number | null
+      }
+      sankey_link: {
+        source: number | null
+        target: number | null
+        value: number | null
+      }
+      sankey_node: {
+        name: string | null
+      }
     }
   }
 }

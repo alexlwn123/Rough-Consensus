@@ -1,5 +1,5 @@
 import { Session } from "@supabase/supabase-js";
-import { Enums, Tables } from "./Database.types";
+import { CompositeTypes, Enums, Tables } from "./Database.types";
 
 export type VoteOption = "for" | "against" | "undecided";
 
@@ -10,23 +10,11 @@ export type CastedVote = {
   postDebate: { option: VoteOption };
 };
 
-export type Tally = {
-  pre: Record<VoteOption, number>;
-  post: Record<VoteOption, number>;
-};
-
-export interface UserVotes {
-  preDebate?: Vote;
-  postDebate?: Vote;
-}
-
-export interface User {
-  id: string;
-  displayName: string;
-  photoURL: string;
-  email: string;
+export type User = {
+  id: SessionUser["id"];
+  displayName: SessionUser["user_metadata"]["full_name"];
   isAdmin?: boolean;
-}
+};
 
 export type SessionUser = Session["user"];
 
@@ -47,17 +35,10 @@ type KeysToCamelCase<T> = {
 
 export type Debate = KeysToCamelCase<DebateDb>;
 
-export interface SankeyLink {
-  source: number;
-  target: number;
-  value: number;
-}
+export type DbLink = CompositeTypes<"sankey_link">;
 
-export interface SankeyNode {
-  name: string;
-}
+export type DbNode = CompositeTypes<"sankey_node">;
 
-export interface SankeyData {
-  nodes: SankeyNode[];
-  links: SankeyLink[];
-}
+export type DbSankeyData = CompositeTypes<"debate_sankey_data">;
+
+export type Tally = CompositeTypes<"debate_vote_counts">;

@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { sankey, sankeyLinkHorizontal } from 'd3-sankey';
-import { SankeyData } from '../../types';
+import { sankey, SankeyGraph, SankeyLink, sankeyLinkHorizontal, SankeyLinkMinimal, SankeyNode } from 'd3-sankey';
+import { DbLink, DbNode, DbSankeyData, } from '../../types';
 
 interface SankeyDiagramProps {
-  data: SankeyData;
+  data: DbSankeyData;
   width: number;
   height: number;
 }
+
 
 const COLORS = {
   'Pre: For': '#22c55e',      // Green
@@ -22,12 +23,12 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ data, width, height }) =>
   const svgRef = useRef<SVGSVGElement>(null);
   
   useEffect(() => {
-    if (!data || !data.nodes.length || !svgRef.current) return;
-    
+    if (!data?.nodes?.length || !data.links || !svgRef.current) return;
+
     const margin = { top: 10, right: 10, bottom: 10, left: 10 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
-    
+
     // Clear existing SVG
     d3.select(svgRef.current).selectAll('*').remove();
     
@@ -36,12 +37,13 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ data, width, height }) =>
       .nodeWidth(15)
       .nodePadding(10)
       .extent([[margin.left, margin.top], [innerWidth, innerHeight]]);
-    
+
+
     // Format the data for the Sankey diagram
     const sankeyData = sankeyGenerator({
-      nodes: data.nodes.map(d => Object.assign({}, d)),
-      links: data.links.map(d => Object.assign({}, d))
-    });
+      nodes: data.nodes.filter(isSankeyNode),
+      links: data.links.filter(isSankeyLink),
+    } satisfies Graph);
     
     // Create the SVG
     const svg = d3.select(svgRef.current)
@@ -54,8 +56,9 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ data, width, height }) =>
       .data(sankeyData.links)
       .join('path')
       .attr('d', sankeyLinkHorizontal())
-      .attr('stroke-width', d => Math.max(1, d.width))
+      .attr('stroke-width', d => Math.max(1, d.width ?? 0))
       .attr('stroke', d => {
+        if (!isSankeyLink(d)) return '#aaa';
         const sourceNode = sankeyData.nodes[d.source.index];
         return d3.color(COLORS[sourceNode.name] || '#aaa')?.darker(0.5) || '#aaa';
       })

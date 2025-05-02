@@ -85,7 +85,7 @@ export const subscribeToDebate = (
 };
 
 // Get vote counts for a debate (server-side aggregation)
-export const getDebateVoteCounts = async (debateId: string): Promise<Tally> => {
+export const getDebateVoteCounts = async (debateId: string) => {
   try {
     const { data, error } = await supabase.rpc("get_debate_vote_counts", {
       debate_id: debateId,
@@ -99,7 +99,9 @@ export const getDebateVoteCounts = async (debateId: string): Promise<Tally> => {
     return {
       pre: { for: 0, against: 0, undecided: 0 },
       post: { for: 0, against: 0, undecided: 0 },
-    };
+      total_voters: 0,
+      current_phase: "scheduled",
+    } satisfies Tally;
   }
 };
 
@@ -222,7 +224,7 @@ export const generateSankeyData = (votes: CastedVote[]): SankeyData => {
     }
   });
 
-  return { nodes, links };
+  return { nodes, links, current_phase: "finished" } satisfies SankeyData;
 };
 
 const getNodeIndex = (option: VoteOption): number => {

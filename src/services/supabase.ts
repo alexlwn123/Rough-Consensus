@@ -53,19 +53,9 @@ export const checkIsAdmin = async (userId: string): Promise<boolean> => {
 
     if (roleError && roleError.code !== "PGSQL_ERROR_NO_DATA_FOUND") {
       console.error("Error checking admin role:", roleError);
-    } else if (roleData) {
-      return true; // User found in user_roles as admin
     }
 
-    // If not found directly or there was an error, try the function approach
-    const { data: funcData, error: funcError } = await supabase.rpc("is_admin");
-
-    if (funcError) {
-      console.error("Error calling is_admin function:", funcError);
-      return false;
-    }
-
-    return !!funcData; // Return result from the function
+    return !!roleData;
   } catch (error) {
     console.error("Exception checking admin status:", error);
     return false;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Debate } from '../../types/index';
 import DebateListItem from './DebateListItem';
+import { Live } from '../ui/Live';
 
 interface DebateListProps {
   title: string;
@@ -48,21 +49,24 @@ const DebateList: React.FC<DebateListProps> = ({
 
   return (
     <section className={styles.container}>
-      <div className={`flex items-center justify-between border-b ${styles.header} pb-4`}>
+      <div
+        className={`flex items-center justify-between border-b ${styles.header} pb-4`}
+      >
         <div className="flex items-center gap-3">
-          <h2 className={`text-xl sm:text-2xl font-bold ${styles.title}`}>{title}</h2>
-          {status === 'ongoing' && (
+          <h2 className={`text-xl sm:text-2xl font-bold ${styles.title}`}>
+            {title}
+          </h2>
+          {status === "ongoing" && (
             <div className="flex items-center gap-2">
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-              </span>
+              <Live />
               <span className="text-sm font-medium text-red-600">Live</span>
             </div>
           )}
         </div>
-        <span className={`text-sm font-medium px-3 py-1 rounded-full ${styles.counter}`}>
-          {debates.length} {debates.length === 1 ? 'debate' : 'debates'}
+        <span
+          className={`text-sm font-medium px-3 py-1 rounded-full ${styles.counter}`}
+        >
+          {debates.length} {debates.length === 1 ? "debate" : "debates"}
         </span>
       </div>
       {debates.length === 0 ? (
@@ -71,7 +75,7 @@ const DebateList: React.FC<DebateListProps> = ({
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-4">
-          {debates.map(debate => (
+          {debates.map((debate) => (
             <DebateListItem key={debate.id} debate={debate} />
           ))}
         </div>

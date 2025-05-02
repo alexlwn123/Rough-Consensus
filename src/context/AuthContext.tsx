@@ -28,8 +28,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCurrentUser({
       id: sessionUser.id,
       displayName: sessionUser.user_metadata.full_name || 'Anonymous',
-      photoURL: sessionUser.user_metadata.avatar_url || '',
-      email: sessionUser.email || '',
       isAdmin,
     });
   };
