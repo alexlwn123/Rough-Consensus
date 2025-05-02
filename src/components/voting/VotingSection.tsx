@@ -1,7 +1,7 @@
 import React from "react";
 import { VoteOption } from "../../types";
 import VoteCard from "../ui/VoteCard";
-import { useDebate } from "../../context/useDebate";
+import { useDebate } from "../../context/DebateContext";
 
 interface VotingSectionProps {
   phase: "pre" | "post";

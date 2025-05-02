@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useDebate } from "../../context/useDebate";
+import { useDebate } from "../../context/DebateContext";
 import Button from "../ui/Button";
 import { Phase } from "../../types";
 

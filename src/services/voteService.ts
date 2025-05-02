@@ -11,6 +11,7 @@ import {
 
 // Cast a vote
 export const castVote = async (
+  existingVote: Vote | null,
   debateId: string,
   userId: string,
   phase: "pre" | "post",
@@ -18,6 +19,7 @@ export const castVote = async (
 ) => {
   try {
     const vote = {
+      ...(existingVote ? { id: existingVote.id } : {}),
       user_id: userId,
       debate_id: debateId,
       [`${phase}_vote`]: { option },

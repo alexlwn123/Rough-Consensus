@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDebate } from "../../context/useDebate";
+import { useDebate } from "../../context/DebateContext";
 import SankeyDiagram from "./SankeyDiagram";
 import { BarChart, Activity } from "lucide-react";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { useDebate } from "../../context/useDebate";
+import { useDebate } from "../../context/DebateContext";
 import Header from "../layout/Header";
 import VotingSection from "../voting/VotingSection";
 import ResultsPanel from "../results/ResultsPanel";

@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { DebateProvider } from "../context/DebateContext";
+import { DebateProvider } from "../context/DebateProvider";
 import DebatePageContent from "../components/debates/DebatePageContent";
 
 const DebatePage: React.FC = () => {
