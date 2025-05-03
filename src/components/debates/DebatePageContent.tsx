@@ -39,8 +39,6 @@ const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
 
   const phase = getPhaseDisplay(debate?.currentPhase ?? null);
 
-  console.warn("debate", debate);
-
   const hideVotingSection =
     debate?.currentPhase === "scheduled" ||
     (debate?.currentPhase === "finished" &&

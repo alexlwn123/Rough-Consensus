@@ -40,5 +40,6 @@ export type DbLink = CompositeTypes<"sankey_link">;
 export type DbNode = CompositeTypes<"sankey_node">;
 
 export type DbSankeyData = CompositeTypes<"debate_sankey_data">;
+export type DbDebateResult = CompositeTypes<"debate_result">;
 
 export type Tally = NonNullable<CompositeTypes<"debate_vote_counts">>;

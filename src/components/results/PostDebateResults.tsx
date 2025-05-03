@@ -1,4 +1,5 @@
 import React from "react";
+import { calculatePercentage } from "../../lib/utils";
 
 type PostDebateResultsProps = {
   postVotes: {
@@ -7,13 +8,11 @@ type PostDebateResultsProps = {
     undecided: number | null;
   } | null;
   postTotalVotes: number;
-  calculatePercentage: (count: number, total: number) => number;
 };
 
 const PostDebateResults: React.FC<PostDebateResultsProps> = ({
   postVotes,
   postTotalVotes,
-  calculatePercentage,
 }) => (
   <div className="bg-gray-50 p-4 rounded-lg">
     <h3 className="font-medium text-gray-700 mb-2">Post-Debate</h3>

@@ -32,10 +32,6 @@ const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
     phase === "pre" ? userVote?.pre_vote : userVote?.post_vote
   );
 
-  useEffect(() => {
-    console.log("userVote", userVote, currentVote);
-  }, [userVote, currentVote]);
-
   const handleVoteSelection = async (option: VoteOption) => {
     try {
       await handleVote(option);

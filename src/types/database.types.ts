@@ -115,6 +115,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_debate_result_data: {
+        Args: { debate_id: string }
+        Returns: Database["public"]["CompositeTypes"]["debate_result"]
+      }
       get_debate_sankey_data: {
         Args: { debate_id: string }
         Returns: Database["public"]["CompositeTypes"]["debate_sankey_data"]
@@ -128,6 +132,33 @@ export type Database = {
       "Debate Phase": "pre" | "post" | "scheduled" | "finished" | "ongoing"
     }
     CompositeTypes: {
+      debate_result: {
+        before:
+          | Database["public"]["CompositeTypes"]["debate_result_before_after"]
+          | null
+        after:
+          | Database["public"]["CompositeTypes"]["debate_result_before_after"]
+          | null
+        flows:
+          | Database["public"]["CompositeTypes"]["debate_result_flows"]
+          | null
+      }
+      debate_result_before_after: {
+        pro: number | null
+        against: number | null
+        undecided: number | null
+      }
+      debate_result_flows: {
+        protopro: number | null
+        protoagainst: number | null
+        protoundecided: number | null
+        againsttopro: number | null
+        againsttoagainst: number | null
+        againsttoundecided: number | null
+        undecidedtopro: number | null
+        undecidedtoagainst: number | null
+        undecidedtoundecided: number | null
+      }
       debate_sankey_data: {
         nodes: Database["public"]["CompositeTypes"]["sankey_node"][] | null
         links: Database["public"]["CompositeTypes"]["sankey_link"][] | null

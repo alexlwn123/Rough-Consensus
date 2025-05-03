@@ -1,4 +1,5 @@
 import React from "react";
+import { calculatePercentage } from "../../lib/utils";
 
 type PreDebateResultsProps = {
   preVotes: {
@@ -7,13 +8,11 @@ type PreDebateResultsProps = {
     undecided: number | null;
   } | null;
   preTotalVotes: number;
-  calculatePercentage: (count: number, total: number) => number;
 };
 
 const PreDebateResults: React.FC<PreDebateResultsProps> = ({
   preVotes,
   preTotalVotes,
-  calculatePercentage,
 }) => (
   <div className="bg-gray-50 p-4 rounded-lg">
     <h3 className="font-medium text-gray-700 mb-2">Pre-Debate</h3>

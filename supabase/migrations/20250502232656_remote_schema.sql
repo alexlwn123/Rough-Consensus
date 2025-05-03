@@ -4,6 +4,33 @@ alter table "public"."votes" alter column "user_id" set not null;
 
 set check_function_bodies = off;
 
+-- Composite type for before/after counts
+CREATE TYPE debate_result_before_after AS (
+  pro integer,
+  against integer,
+  undecided integer
+);
+
+-- Composite type for flows
+CREATE TYPE debate_result_flows AS (
+  proToPro integer,
+  proToAgainst integer,
+  proToUndecided integer,
+  againstToPro integer,
+  againstToAgainst integer,
+  againstToUndecided integer,
+  undecidedToPro integer,
+  undecidedToAgainst integer,
+  undecidedToUndecided integer
+);
+
+-- Composite type for the full result
+CREATE TYPE debate_result AS (
+  before debate_result_before_after,
+  after debate_result_before_after,
+  flows debate_result_flows
+);
+
 CREATE OR REPLACE FUNCTION public.get_debate_sankey_data(debate_id uuid)
  RETURNS debate_sankey_data
  LANGUAGE plpgsql
@@ -123,5 +150,69 @@ BEGIN
   RETURN result;
 END;$function$
 ;
+
+-- Function to get debate result data in the required shape
+CREATE OR REPLACE FUNCTION public.get_debate_result_data(debate_id uuid)
+ RETURNS debate_result
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
+DECLARE
+  debate_exists BOOLEAN;
+  before_counts debate_result_before_after;
+  after_counts debate_result_before_after;
+  flows debate_result_flows;
+  result debate_result;
+  _debate_id UUID := debate_id;
+BEGIN
+  -- Check if debate exists
+  SELECT EXISTS(
+    SELECT 1 FROM debates WHERE id = _debate_id
+  ) INTO debate_exists;
+  IF NOT debate_exists THEN
+    RAISE EXCEPTION 'Debate with ID % does not exist', _debate_id;
+  END IF;
+
+  -- Before counts
+  SELECT
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'for'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'against'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'undecided')
+  INTO before_counts
+  FROM votes v
+  WHERE v.debate_id = _debate_id;
+
+  -- After counts
+  SELECT
+    COUNT(*) FILTER (WHERE v.post_vote->>'option' = 'for'),
+    COUNT(*) FILTER (WHERE v.post_vote->>'option' = 'against'),
+    COUNT(*) FILTER (WHERE v.post_vote->>'option' = 'undecided')
+  INTO after_counts
+  FROM votes v
+  WHERE v.debate_id = _debate_id;
+
+  -- Flows
+  SELECT
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'for' AND v.post_vote->>'option' = 'for'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'for' AND v.post_vote->>'option' = 'against'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'for' AND v.post_vote->>'option' = 'undecided'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'against' AND v.post_vote->>'option' = 'for'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'against' AND v.post_vote->>'option' = 'against'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'against' AND v.post_vote->>'option' = 'undecided'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'undecided' AND v.post_vote->>'option' = 'for'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'undecided' AND v.post_vote->>'option' = 'against'),
+    COUNT(*) FILTER (WHERE v.pre_vote->>'option' = 'undecided' AND v.post_vote->>'option' = 'undecided')
+  INTO flows
+  FROM votes v
+  WHERE v.debate_id = _debate_id
+    AND v.pre_vote IS NOT NULL
+    AND v.post_vote IS NOT NULL;
+
+  -- Assemble result
+  result := ROW(before_counts, after_counts, flows);
+  RETURN result;
+END;
+$function$;
 
 

@@ -7,7 +7,14 @@ import {
   subscribeToVoteCounts,
   subscribeToSankeyData,
 } from "../services/voteService";
-import { Debate, VoteOption, DbSankeyData, Tally, Phase, Vote } from "../types";
+import {
+  Debate,
+  VoteOption,
+  Tally,
+  Phase,
+  Vote,
+  DbDebateResult,
+} from "../types";
 import { useAuth } from "./AuthContext";
 import { coerceDebateFromDb } from "../lib/utils";
 import { DebateContext } from "./DebateContext";
@@ -17,7 +24,7 @@ export type DebateContextType = {
   loading: boolean;
   userVote: Vote | null;
   voteCounts: Tally;
-  sankeyData: DbSankeyData | null;
+  sankeyData: DbDebateResult | null;
   handleVote: (option: VoteOption) => Promise<void>;
   changePhase: (phase: Phase) => Promise<void>;
 };
@@ -37,7 +44,7 @@ export const DebateProvider: React.FC<{
   const [debate, setDebate] = useState<Debate | null>(null);
   const [loading, setLoading] = useState(true);
   const [userVote, setUserVote] = useState<Vote | null>(null);
-  const [sankeyData, setSankeyData] = useState<DbSankeyData | null>(null);
+  const [sankeyData, setSankeyData] = useState<DbDebateResult | null>(null);
   const [voteCounts, setVoteCounts] = useState<Tally>(defaultVoteCounts);
 
   // Subscribe to debate changes

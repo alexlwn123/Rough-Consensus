@@ -7,6 +7,7 @@ import {
   CastedVote,
   Phase,
   Tally,
+  DbDebateResult,
 } from "../types";
 
 // Cast a vote
@@ -107,15 +108,18 @@ export const getDebateVoteCounts = async (debateId: string) => {
 // Get Sankey data for a debate (server-side aggregation)
 export const getDebateSankeyData = async (
   debateId: string
-): Promise<DbSankeyData | null> => {
+): Promise<DbDebateResult | null> => {
   try {
-    const { data, error } = await supabase.rpc("get_debate_sankey_data", {
-      debate_id: debateId,
-    });
+    const { data: result, error: resultError } = await supabase.rpc(
+      "get_debate_result_data",
+      {
+        debate_id: debateId,
+      }
+    );
 
-    if (error) throw error;
+    if (resultError) throw resultError;
 
-    return data;
+    return result;
   } catch (error) {
     console.error("Error getting Sankey data:", error);
     return null;
@@ -156,7 +160,7 @@ export const subscribeToVoteCounts = (
 // Subscribe to Sankey data changes
 export const subscribeToSankeyData = (
   debateId: string,
-  callback: (sankeyData: DbSankeyData | null) => void
+  callback: (sankeyData: DbDebateResult | null) => void
 ) => {
   // Initial fetch
   getDebateSankeyData(debateId).then(callback);

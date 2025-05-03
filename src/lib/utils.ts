@@ -43,3 +43,8 @@ export function getPhaseDisplay(phase: Phase | null): string {
       return "Unknown";
   }
 }
+
+export const calculatePercentage = (count: number, total: number) => {
+  if (total === 0) return 0;
+  return Math.round((count / total) * 100);
+};
