@@ -7,23 +7,14 @@ import OpinionShift from "./OpinionShift";
 import { DebateFlow } from "./SankeyDiagram/debate-flow";
 import { dummyDebateResult } from "../../utils/dummydata";
 import { motion } from "framer-motion";
-const ResultsPanel: React.FC = () => {
-  const { voteCounts, sankeyData, debate } = useDebate();
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Calculate total votes for each phase
-  const preTotalVotes =
-    (voteCounts?.pre?.for ?? 0) +
-    (voteCounts?.pre?.against ?? 0) +
-    (voteCounts?.pre?.undecided ?? 0);
-  const postTotalVotes =
-    (voteCounts?.post?.for ?? 0) +
-    (voteCounts?.post?.against ?? 0) +
-    (voteCounts?.post?.undecided ?? 0);
+const ResultsPanel: React.FC = () => {
+  const { voteCounts, sankeyData, debate, voteSummary } = useDebate();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const isFinished = debate?.currentPhase === "finished";
 
-  if (!isFinished) {
+  if (!isFinished || !voteSummary) {
     return (
       <div
         ref={containerRef}
@@ -47,25 +38,21 @@ const ResultsPanel: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <PreDebateResults
-          preVotes={voteCounts?.pre ?? null}
-          preTotalVotes={preTotalVotes}
+          preVotes={voteCounts.pre}
+          preTotalVotes={voteSummary.pre.total}
         />
         <PostDebateResults
-          postVotes={voteCounts?.post ?? null}
-          postTotalVotes={postTotalVotes}
+          postVotes={voteCounts.post}
+          postTotalVotes={voteSummary.post.total}
         />
         <OpinionShift
-          preTotalVotes={preTotalVotes}
-          postTotalVotes={postTotalVotes}
+          preTotalVotes={voteSummary.pre.total}
+          postTotalVotes={voteSummary.post.total}
         />
       </div>
 
       {sankeyData ? (
-        <motion.div
-        // initial={{ opacity: 0, y: -20 }}
-        // animate={{ opacity: 1, y: 0 }}
-        // transition={{ duration: 0.5 }}
-        >
+        <motion.div>
           <DebateFlow debateResults={dummyDebateResult} />
         </motion.div>
       ) : (

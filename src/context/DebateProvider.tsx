@@ -16,7 +16,7 @@ import {
   DbDebateResult,
 } from "../types";
 import { useAuth } from "./AuthContext";
-import { coerceDebateFromDb } from "../lib/utils";
+import { calculatePercentage, coerceDebateFromDb } from "../lib/utils";
 import { DebateContext } from "./DebateContext";
 
 export type DebateContextType = {
@@ -27,6 +27,7 @@ export type DebateContextType = {
   sankeyData: DbDebateResult | null;
   handleVote: (option: VoteOption) => Promise<void>;
   changePhase: (phase: Phase) => Promise<void>;
+  voteSummary: VoteSummary | null;
 };
 
 const defaultVoteCounts = {
@@ -35,6 +36,67 @@ const defaultVoteCounts = {
   total_voters: 0,
   current_phase: null,
 } satisfies Tally;
+
+type VoteSummary = {
+  pre: {
+    for: number;
+    against: number;
+    undecided: number;
+    total: number;
+  };
+  post: {
+    for: number;
+    against: number;
+    undecided: number;
+    total: number;
+  };
+  percentShift: {
+    for: number;
+    against: number;
+    undecided: number;
+  };
+};
+
+const calculateVoteSummary = (counts: Tally): VoteSummary | null => {
+  if (!counts.pre || !counts.post) return null;
+  const votes = {
+    pre: {
+      for: counts.pre?.for ?? 0,
+      against: counts.pre?.against ?? 0,
+      undecided: counts.pre?.undecided ?? 0,
+    },
+    post: {
+      for: counts.post?.for ?? 0,
+      against: counts.post?.against ?? 0,
+      undecided: counts.post?.undecided ?? 0,
+    },
+  };
+  const totalVotes = {
+    pre: votes.pre.for + votes.pre.against + votes.pre.undecided,
+    post: votes.post.for + votes.post.against + votes.post.undecided,
+  };
+  return {
+    pre: {
+      ...votes.pre,
+      total: totalVotes.pre,
+    },
+    post: {
+      ...votes.post,
+      total: totalVotes.post,
+    },
+    percentShift: {
+      for:
+        calculatePercentage(votes.post.for, totalVotes.post) -
+        calculatePercentage(votes.pre.for, totalVotes.pre),
+      against:
+        calculatePercentage(votes.post.against, totalVotes.post) -
+        calculatePercentage(votes.pre.against, totalVotes.pre),
+      undecided:
+        calculatePercentage(votes.post.undecided, totalVotes.post) -
+        calculatePercentage(votes.pre.undecided, totalVotes.pre),
+    },
+  };
+};
 
 export const DebateProvider: React.FC<{
   children: React.ReactNode;
@@ -46,8 +108,8 @@ export const DebateProvider: React.FC<{
   const [userVote, setUserVote] = useState<Vote | null>(null);
   const [sankeyData, setSankeyData] = useState<DbDebateResult | null>(null);
   const [voteCounts, setVoteCounts] = useState<Tally>(defaultVoteCounts);
+  const [voteSummary, setVoteSummary] = useState<VoteSummary | null>(null);
 
-  // Subscribe to debate changes
   useEffect(() => {
     if (!debateId) return;
 
@@ -78,7 +140,10 @@ export const DebateProvider: React.FC<{
     if (!debateId) return;
 
     const unsubscribe = subscribeToVoteCounts(debateId, (counts) => {
+      console.log("counts", counts);
       setVoteCounts(counts);
+      console.log("voteSummary", calculateVoteSummary(counts));
+      setVoteSummary(calculateVoteSummary(counts));
     });
 
     return () => unsubscribe();
@@ -166,6 +231,7 @@ export const DebateProvider: React.FC<{
     sankeyData,
     handleVote,
     changePhase,
+    voteSummary,
   };
 
   return (

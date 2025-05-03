@@ -7,6 +7,7 @@ import VotingSection from "../voting/VotingSection";
 import ResultsPanel from "../results/ResultsPanel";
 import Footer from "../layout/Footer";
 import { getPhaseDisplay } from "../../lib/utils";
+import DebateInfoPanel from "./DebateInfoPanel";
 
 const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
   const { currentUser, loading: authLoading } = useAuth();
@@ -42,11 +43,13 @@ const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
   const hideVotingSection =
     debate?.currentPhase === "scheduled" ||
     (debate?.currentPhase === "finished" &&
-      (userVote?.pre_vote === null || userVote?.post_vote === null));
+      !(userVote?.pre_vote || userVote?.post_vote));
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header title={debate?.title ?? ""} debateTitle={phase} />
+
+      <DebateInfoPanel />
 
       <div className="container mx-auto px-4 py-8">
         {!hideVotingSection && (

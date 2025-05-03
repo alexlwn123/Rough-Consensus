@@ -1,6 +1,5 @@
 import React from "react";
 import { useDebate } from "../../context/DebateContext";
-import { calculatePercentage } from "../../lib/utils";
 
 type OpinionShiftProps = {
   preTotalVotes: number;
@@ -11,28 +10,12 @@ const OpinionShift: React.FC<OpinionShiftProps> = ({
   preTotalVotes,
   postTotalVotes,
 }) => {
-  const { voteCounts } = useDebate();
-  // Determine if we have pre and post votes to compare
+  const { voteSummary } = useDebate();
   const hasCompleteData = preTotalVotes > 0 && postTotalVotes > 0;
 
-  // Calculate opinion shift
-  const calculateOpinionShift = () => {
-    if (!hasCompleteData) return { for: 0, against: 0, undecided: 0 };
+  const shifts = voteSummary?.percentShift;
 
-    return {
-      for:
-        calculatePercentage(voteCounts?.post?.for ?? 0, postTotalVotes) -
-        calculatePercentage(voteCounts?.pre?.for ?? 0, preTotalVotes),
-      against:
-        calculatePercentage(voteCounts?.post?.against ?? 0, postTotalVotes) -
-        calculatePercentage(voteCounts?.pre?.against ?? 0, preTotalVotes),
-      undecided:
-        calculatePercentage(voteCounts?.post?.undecided ?? 0, postTotalVotes) -
-        calculatePercentage(voteCounts?.pre?.undecided ?? 0, preTotalVotes),
-    };
-  };
-
-  const shifts = calculateOpinionShift();
+  if (!shifts) return null;
 
   // Determine debate winner
   const determineWinner = () => {
