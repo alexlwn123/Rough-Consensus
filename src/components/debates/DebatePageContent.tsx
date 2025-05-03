@@ -10,7 +10,7 @@ import { getPhaseDisplay } from "../../lib/utils";
 
 const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
   const { currentUser, loading: authLoading } = useAuth();
-  const { debate, loading } = useDebate();
+  const { debate, loading, userVote } = useDebate();
 
   if (authLoading || loading) {
     return (
@@ -41,15 +41,22 @@ const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
 
   console.warn("debate", debate);
 
+  const hideVotingSection =
+    debate?.currentPhase === "scheduled" ||
+    (debate?.currentPhase === "finished" &&
+      (userVote?.pre_vote === null || userVote?.post_vote === null));
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header title={debate?.title ?? ""} debateTitle={phase} />
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <VotingSection phase="pre" />
-          <VotingSection phase="post" />
-        </div>
+        {!hideVotingSection && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <VotingSection phase="pre" />
+            <VotingSection phase="post" />
+          </div>
+        )}
 
         <ResultsPanel />
       </div>
