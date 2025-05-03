@@ -240,8 +240,8 @@ export const DebateFlow: React.FC<{
       totalValue > 0 ? Math.round((node.value / totalValue) * 100) : 0;
 
     // Get node position for better tooltip placement
-    const nodeX = (node.x0 || 0) + ((node.x1 || 0) - (node.x0 || 0)) / 2;
-    const nodeY = (node.y0 || 0) + ((node.y1 || 0) - (node.y0 || 0)) / 2;
+    const nodeX = (node.x0 ?? 0) + ((node.x1 ?? 0) - (node.x0 ?? 0)) / 2;
+    const nodeY = (node.y0 ?? 0) + ((node.y1 ?? 0) - (node.y0 ?? 0)) / 2;
 
     // Convert to screen coordinates
     const rect = svgRef.current?.getBoundingClientRect();
@@ -282,14 +282,6 @@ export const DebateFlow: React.FC<{
     if (typeof link.source !== "object" || typeof link.target !== "object")
       return;
 
-    // Calculate total value for percentage
-    // const totalBefore = data.nodes.reduce((sum, n) => {
-    //   if (n.column === 0) return sum + n.value;
-    //   return sum;
-    // }, 0);
-
-    // const sourcePercentage =
-    //   totalBefore > 0 ? Math.round((link.source.value / totalBefore) * 100) : 0;
     const flowPercentage =
       link.source.value > 0
         ? Math.round((link.value / link.source.value) * 100)
@@ -376,10 +368,10 @@ export const DebateFlow: React.FC<{
       </div>
 
       <motion.div
-        className="relative bg-white rounded-lg shadow-md p-2 md:p-4"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        className="relative bg-white"
+        // initial={{ opacity: 0, scale: 0.95 }}
+        // animate={{ opacity: 1, scale: 1 }}
+        // transition={{ duration: 0.5, delay: 0.2 }}
       >
         <svg
           ref={svgRef}

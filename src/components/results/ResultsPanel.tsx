@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useDebate } from "../../context/DebateContext";
 import { BarChart, Activity } from "lucide-react";
 import PreDebateResults from "./PreDebateResults";
@@ -10,36 +10,6 @@ import { motion } from "framer-motion";
 const ResultsPanel: React.FC = () => {
   const { voteCounts, sankeyData, debate } = useDebate();
   const containerRef = useRef<HTMLDivElement>(null);
-  // const [containerWidth, setContainerWidth] = useState<number>(0);
-
-  // Use ResizeObserver to track container width
-  // useEffect(() => {
-  //   const node = containerRef.current;
-  //   if (!node) return;
-  //   const handleResize = (entries: ResizeObserverEntry[]) => {
-  //     for (const entry of entries) {
-  //       setContainerWidth(entry.contentRect.width);
-  //     }
-  //   };
-  //   const observer = new window.ResizeObserver(handleResize);
-  //   observer.observe(node);
-  //   // Set initial width
-  //   setContainerWidth(node.offsetWidth);
-  //   return () => observer.disconnect();
-  // }, []);
-
-  // Calculate chart dimensions based on container size
-  // const getChartDimensions = () => {
-  //   if (containerWidth < 400) {
-  //     return { width: Math.max(containerWidth, 200), height: 250 };
-  //   } else if (containerWidth < 900) {
-  //     return { width: containerWidth - 40, height: 300 };
-  //   } else {
-  //     return { width: 800, height: 400 };
-  //   }
-  // };
-
-  // const { width, height } = getChartDimensions();
 
   // Calculate total votes for each phase
   const preTotalVotes =
@@ -92,10 +62,9 @@ const ResultsPanel: React.FC = () => {
 
       {sankeyData ? (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mt-8"
+        // initial={{ opacity: 0, y: -20 }}
+        // animate={{ opacity: 1, y: 0 }}
+        // transition={{ duration: 0.5 }}
         >
           <DebateFlow debateResults={dummyDebateResult} />
         </motion.div>
