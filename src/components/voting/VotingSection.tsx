@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { VoteOption } from "../../types";
 import VoteCard from "../ui/VoteCard";
 import { useDebate } from "../../context/DebateContext";
@@ -6,6 +6,18 @@ import { useDebate } from "../../context/DebateContext";
 interface VotingSectionProps {
   phase: "pre" | "post";
 }
+
+const getVote = (vote: unknown): VoteOption | null => {
+  if (
+    vote &&
+    typeof vote === "object" &&
+    "option" in vote &&
+    typeof vote.option === "string"
+  ) {
+    return vote.option as VoteOption;
+  }
+  return null;
+};
 
 const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
   const { debate, handleVote, userVote } = useDebate();
@@ -16,8 +28,13 @@ const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
   const canVote = isActivePhase && (phase === "pre" || didPreVote);
 
   // Get user's vote for this phase
-  const currentVote =
-    phase === "pre" ? userVote?.pre_vote : userVote?.post_vote;
+  const currentVote = getVote(
+    phase === "pre" ? userVote?.pre_vote : userVote?.post_vote
+  );
+
+  useEffect(() => {
+    console.log("userVote", userVote, currentVote);
+  }, [userVote, currentVote]);
 
   const handleVoteSelection = async (option: VoteOption) => {
     try {

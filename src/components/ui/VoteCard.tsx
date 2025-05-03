@@ -89,7 +89,10 @@ const VoteCard: React.FC<VoteCardProps> = ({
   };
 
   return (
-    <div className={getCardStyles()} onClick={handleClick}>
+    <div
+      className={getCardStyles()}
+      onClick={!isSelected && !disabled ? handleClick : undefined}
+    >
       <div className="flex items-start space-x-4">
         <div className={`${getIconStyles()} mt-1`}>{getIcon()}</div>
         <div>
@@ -100,10 +103,14 @@ const VoteCard: React.FC<VoteCardProps> = ({
             variant={isSelected ? "primary" : "outline"}
             size="sm"
             className="mt-3"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClick();
-            }}
+            onClick={
+              !isSelected
+                ? (e) => {
+                    e.stopPropagation();
+                    handleClick();
+                  }
+                : undefined
+            }
             disabled={disabled}
           >
             {isSelected ? "Selected" : "Select"}

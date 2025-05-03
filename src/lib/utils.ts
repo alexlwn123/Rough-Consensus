@@ -27,7 +27,7 @@ export function coerceDebateFromDb(debate: DebateDb): Debate {
   };
 }
 
-export function getPhaseDisplay(phase: Phase): string {
+export function getPhaseDisplay(phase: Phase | null): string {
   switch (phase) {
     case "scheduled":
       return "Scheduled";

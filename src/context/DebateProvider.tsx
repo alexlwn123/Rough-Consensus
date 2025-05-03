@@ -125,13 +125,14 @@ export const DebateProvider: React.FC<{
     }
 
     try {
-      await castVote(
+      const vote = await castVote(
         userVote,
         debateId,
         currentUser.id,
         debate.currentPhase,
         option
       );
+      if (vote) setUserVote(vote);
     } catch (error) {
       console.error("Error handling vote:", error);
       throw error;
