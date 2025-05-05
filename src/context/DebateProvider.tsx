@@ -140,9 +140,7 @@ export const DebateProvider: React.FC<{
     if (!debateId) return;
 
     const unsubscribe = subscribeToVoteCounts(debateId, (counts) => {
-      console.log("counts", counts);
       setVoteCounts(counts);
-      console.log("voteSummary", calculateVoteSummary(counts));
       setVoteSummary(calculateVoteSummary(counts));
     });
 
