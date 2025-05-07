@@ -7,7 +7,7 @@ import DebateList from "../components/debates/DebateList";
 import { Debate } from "../types";
 import { fetchDebates } from "../services/supabase";
 import { coerceDebateListFromDb } from "../lib/utils";
-import bitcoinChatImage from "../assets/bitcoinchat.png";
+import rcLogo from "../assets/rc-logo.svg";
 
 const HomePage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -65,8 +65,8 @@ const HomePage: React.FC = () => {
           <div className="h-full flex flex-col items-center px-4">
             <div className="w-full flex justify-center mt-10">
               <img
-                src={bitcoinChatImage}
-                alt="Bitcoin Chat"
+                src={rcLogo}
+                alt=""
                 className="w-48 md:w-80 md:h-80 object-contain drop-shadow-xl"
                 aria-hidden="true"
               />
