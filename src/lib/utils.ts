@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function coerceDebateListFromDb(debates: DebateDb[]): Debate[] {
-  return debates.map(coerceDebateFromDb);
+  return debates.filter((x) => !x.is_deleted).map(coerceDebateFromDb);
 }
 
 export function coerceDebateFromDb(debate: DebateDb): Debate {
