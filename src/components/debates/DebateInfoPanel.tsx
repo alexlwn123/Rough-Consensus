@@ -103,7 +103,7 @@ const DebateInfoPanel: React.FC = () => {
           tabIndex={0}
           aria-label="Debate motion"
         >
-          {debate.motion || debate.title}
+          {debate.title}
         </h1>
         {debate.description && (
           <p
