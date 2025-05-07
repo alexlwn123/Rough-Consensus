@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import rcLogo from "../assets/rc-logo.svg";
+import rcLogo from "../../assets/rc-logo.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { LogOut, Settings, ArrowLeft, Menu } from "lucide-react";
@@ -67,7 +67,7 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
             <img
               src={rcLogo}
               alt="Bitcoin Chat"
-              className="w-16 h-16 object-contain drop-shadow-xl"
+              className="w-16 h-16 object-contain drop-shadow-xl px-2"
               aria-hidden="true"
             />
             <div>
