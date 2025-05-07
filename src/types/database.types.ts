@@ -9,6 +9,35 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      debate_access: {
+        Row: {
+          created_at: string
+          debate_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          debate_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          debate_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "debate_access_debate_id_fkey"
+            columns: ["debate_id"]
+            isOneToOne: false
+            referencedRelation: "debates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       debates: {
         Row: {
           con_description: string | null
@@ -126,6 +155,10 @@ export type Database = {
       get_debate_vote_counts: {
         Args: { debate_id: string }
         Returns: Database["public"]["CompositeTypes"]["debate_vote_counts"]
+      }
+      register_debate_access: {
+        Args: { debate_id_param: string }
+        Returns: boolean
       }
     }
     Enums: {

@@ -5,18 +5,74 @@ import Footer from "../components/layout/Footer";
 import GitHubLogin from "../components/auth/GitHubLogin";
 import DebateList from "../components/debates/DebateList";
 import { Debate } from "../types";
-import { fetchDebates } from "../services/supabase";
+import { fetchDebates, registerDebateAccess } from "../services/supabase";
 import { coerceDebateListFromDb } from "../lib/utils";
 import bitcoinChatImage from "../assets/bitcoinchat.png";
+import { useLocation, useNavigate } from "react-router-dom";
+import { storeActiveDebateId, getActiveDebateId } from "../utils/storage";
 
 const HomePage: React.FC = () => {
   const { currentUser } = useAuth();
   const [debates, setDebates] = useState<Debate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Check for debate ID in URL params, store it, and register access on the server
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const debateId = searchParams.get("id");
+
+    if (!debateId) {
+      console.log("no debateId");
+      return;
+    }
+
+    // Store the debate ID in local storage
+    storeActiveDebateId(debateId);
+
+    if (!currentUser) {
+      console.log("no current user");
+      return;
+    }
+
+    // Register access on the server if user is logged in
+    registerDebateAccess(debateId).then((success) => {
+      if (!success) {
+        console.error("Failed to register debate access");
+        return;
+      }
+      // Remove the 'id' param from the URL, keep other params
+      const newParams = new URLSearchParams(location.search);
+      newParams.delete("id");
+      const newSearch = newParams.toString();
+      navigate(
+        {
+          pathname: location.pathname,
+          search: newSearch ? `?${newSearch}` : "",
+        },
+        { replace: true }
+      );
+    });
+  }, [location, currentUser, navigate]);
+
+  useEffect(() => {
+    // Get the active debate ID from storage
+    const storedDebateId = getActiveDebateId();
+
+    // If we have a stored debate ID and the user is logged in, ensure access is registered
+    if (storedDebateId && currentUser) {
+      console.log("registering debate access", storedDebateId);
+      registerDebateAccess(storedDebateId).catch((err) => {
+        console.error("Error registering debate access:", err);
+      });
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     const fetch = async () => {
       try {
+        // Fetch debates (RLS will automatically filter based on user's access)
         const data = await fetchDebates();
 
         // Map database column names to our interface names
@@ -30,9 +86,18 @@ const HomePage: React.FC = () => {
       }
     };
 
-    fetch();
-  }, []);
+    // Only fetch if user is logged in
+    if (currentUser) {
+      fetch();
+    } else {
+      setIsLoading(false);
+      setDebates([]);
+    }
 
+    // Re-fetch debates when the user changes
+  }, [currentUser]);
+
+  // Get ongoing debates (now filtered on server if needed)
   const ongoingDebates = debates.filter(
     (debate) =>
       debate.currentPhase === "pre" ||
@@ -40,10 +105,12 @@ const HomePage: React.FC = () => {
       debate.currentPhase === "ongoing"
   );
 
+  // Get scheduled debates (now filtered on server if needed)
   const scheduledDebates = debates.filter(
     (debate) => debate.currentPhase === "scheduled"
   );
 
+  // Get past debates (always shown)
   const pastDebates = debates.filter(
     (debate) => debate.currentPhase === "finished"
   );

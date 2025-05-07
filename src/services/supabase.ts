@@ -31,11 +31,31 @@ export const signInWithGithub = async () => {
   }
 };
 
+export const registerDebateAccess = async (debateId: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .rpc('register_debate_access', { debate_id_param: debateId });
+    
+    if (error) {
+      console.error('Error registering debate access:', error);
+      return false;
+    }
+    
+    return !!data;
+  } catch (error) {
+    console.error('Exception registering debate access:', error);
+    return false;
+  }
+};
+
 export const fetchDebates = async () => {
+  // With RLS policies in place, this will automatically return only debates 
+  // the user is allowed to see (finished debates + debates they have access to + all for admins)
   const { data, error } = await supabase
     .from("debates")
     .select("*")
     .order("start_time", { ascending: true });
+  
   if (error) throw error;
   return data;
 };
