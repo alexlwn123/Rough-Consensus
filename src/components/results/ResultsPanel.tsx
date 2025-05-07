@@ -5,7 +5,7 @@ import PreDebateResults from "./PreDebateResults";
 import PostDebateResults from "./PostDebateResults";
 import OpinionShift from "./OpinionShift";
 import { DebateFlow } from "./SankeyDiagram/debate-flow";
-import { dummyDebateResult } from "../../utils/dummydata";
+// import { dummyDebateResult } from "../../utils/dummydata";
 import { motion } from "framer-motion";
 
 const ResultsPanel: React.FC = () => {
@@ -53,7 +53,7 @@ const ResultsPanel: React.FC = () => {
 
       {sankeyData ? (
         <motion.div>
-          <DebateFlow debateResults={dummyDebateResult} />
+          <DebateFlow debateResults={sankeyData} />
         </motion.div>
       ) : (
         <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mt-6">
