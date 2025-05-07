@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import bitcoinChatImage from "../../assets/bitcoinchat.png";
+import rcLogo from "../../assets/rc-logo.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { LogOut, Settings, ArrowLeft, Menu } from "lucide-react";
@@ -65,9 +65,9 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
             <img
-              src={bitcoinChatImage}
+              src={rcLogo}
               alt="Bitcoin Chat"
-              className="w-16 h-16 object-contain drop-shadow-xl"
+              className="w-16 h-16 object-contain drop-shadow-xl px-2"
               aria-hidden="true"
             />
             <div>
