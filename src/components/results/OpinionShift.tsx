@@ -21,9 +21,9 @@ const OpinionShift: React.FC<OpinionShiftProps> = ({
   const determineWinner = () => {
     if (!hasCompleteData) return null;
 
-    if (shifts.for > 0 && shifts.for >= shifts.against) {
+    if (shifts.for > shifts.against) {
       return "for";
-    } else if (shifts.against > 0 && shifts.against > shifts.for) {
+    } else if (shifts.against > shifts.for) {
       return "against";
     } else if (shifts.for === shifts.against) {
       return "tie";
