@@ -5,7 +5,6 @@ import PreDebateResults from "./PreDebateResults";
 import PostDebateResults from "./PostDebateResults";
 import OpinionShift from "./OpinionShift";
 import { DebateFlow } from "./SankeyDiagram/debate-flow";
-// import { dummyDebateResult } from "../../utils/dummydata";
 import { motion } from "framer-motion";
 
 const ResultsPanel: React.FC = () => {
