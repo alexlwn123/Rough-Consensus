@@ -29,8 +29,22 @@ const getPhaseBadge = (phase: string | null | undefined) => {
   );
 };
 
-const getWinnerBadge = (forVotes: number, againstVotes: number) => {
-  if (forVotes > againstVotes) {
+// Determine debate winner
+const determineWinner = (shifts: { for: number; against: number }) => {
+  if (shifts.for > shifts.against) {
+    return "for";
+  } else if (shifts.against > shifts.for) {
+    return "against";
+  } else if (shifts.for === shifts.against) {
+    return "tie";
+  } else {
+    return "undecided";
+  }
+};
+
+const getWinnerBadge = (shifts: { for: number; against: number }) => {
+  const winner = determineWinner(shifts);
+  if (winner === "for") {
     return (
       <span
         className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-600 text-white mb-4"
@@ -42,8 +56,7 @@ const getWinnerBadge = (forVotes: number, againstVotes: number) => {
         Winner: Pro Side
       </span>
     );
-  }
-  if (againstVotes > forVotes) {
+  } else if (winner === "against") {
     return (
       <span
         className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-red-600 text-white mb-4"
@@ -55,24 +68,29 @@ const getWinnerBadge = (forVotes: number, againstVotes: number) => {
         Winner: Con Side
       </span>
     );
-  }
-  return (
-    <span
-      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-400 text-white mb-4"
-      aria-label="Result: Tie"
-    >
-      <span className="mr-1" aria-hidden="true">
-        🤝
+  } else if (winner === "tie" || winner === "undecided") {
+    return (
+      <span
+        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-400 text-white mb-4"
+        aria-label="Result: Tie"
+      >
+        <span className="mr-1" aria-hidden="true">
+          🤝
+        </span>
+        It's a tie!
       </span>
-      It's a tie!
-    </span>
-  );
+    );
+  } else {
+    return null;
+  }
 };
 
 const DebateInfoPanel: React.FC = () => {
   const { debate, voteSummary } = useDebate();
 
   const showWinner = debate?.currentPhase === "finished" && voteSummary;
+
+  const shifts = voteSummary?.percentShift;
 
   if (!debate) return null;
 
@@ -96,8 +114,7 @@ const DebateInfoPanel: React.FC = () => {
             </span>
           )}
         </div>
-        {showWinner &&
-          getWinnerBadge(voteSummary.post.for, voteSummary.post.against)}
+        {showWinner && shifts && getWinnerBadge(shifts)}
         <h1
           className="text-2xl font-bold text-gray-900 mb-1"
           tabIndex={0}
