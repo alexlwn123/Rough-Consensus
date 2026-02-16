@@ -6,6 +6,10 @@
 
 While developed for Bitcoin++ conferences, this certainly can be used for other debate topics. Aside from branding, there's nothing bitcoin related in the tool.
 
+## Usage
+- **[BTC++ Mempool Edition: Filters Debate](https://www.youtube.com/watch?v=GnWaSDipuVY)** - Motion: Uncapping datacarrier (OP_RETURN) by default in bitcoin core will benefit the bitcoin network.
+- **[BTC++ Mempool Edition: Ossification Debate](https://www.youtube.com/watch?v=GnWaSDipuVY)** - Motion: Ossification is a greater threat to bitcoin than new upgrades.
+
 ## Features
 
 - 🔐 **GitHub Authentication**: Secure login through GitHub OAuth
