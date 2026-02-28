@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import rcLogo from "../../assets/rc-logo.svg";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { LogOut, Settings, ArrowLeft, Menu } from "lucide-react";
+import { LogOut, Settings, ArrowLeft, Menu, Github } from "lucide-react";
 import Button from "../ui/Button";
 
 interface HeaderProps {
@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
-  const { currentUser, signOut } = useAuth();
+  const { currentUser, signIn, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -78,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
             </div>
           </Link>
 
-          {currentUser && (
+          {currentUser ? (
             <div className="relative">
               <Button
                 ref={buttonRef}
@@ -122,6 +122,17 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
                 </div>
               )}
             </div>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={signIn}
+              className="border-white text-white hover:bg-white hover:bg-opacity-10 whitespace-nowrap gap-1"
+              icon={<Github className="h-4 w-4" />}
+              aria-label="Sign in with GitHub"
+            >
+              Sign In
+            </Button>
           )}
         </div>
       </div>

@@ -13,7 +13,7 @@ const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
   const { currentUser, loading: authLoading } = useAuth();
   const { debate, loading, userVote } = useDebate();
 
-  if (authLoading || loading) {
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-800"></div>
@@ -21,7 +21,7 @@ const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
     );
   }
 
-  if (!currentUser) {
+  if (!currentUser && debate?.currentPhase !== "finished") {
     return <Navigate to="/" />;
   }
 
@@ -41,6 +41,7 @@ const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
   const phase = getPhaseDisplay(debate?.currentPhase ?? null);
 
   const hideVotingSection =
+    !currentUser ||
     debate?.currentPhase === "scheduled" ||
     (debate?.currentPhase === "finished" &&
       !(userVote?.pre_vote || userVote?.post_vote));

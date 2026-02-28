@@ -54,7 +54,7 @@ export const fetchDebates = async () => {
   const { data, error } = await supabase
     .from("debates")
     .select("*")
-    .order("start_time", { ascending: true });
+    .order("start_time", { ascending: false });
   
   if (error) throw error;
   return data;
