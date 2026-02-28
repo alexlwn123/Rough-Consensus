@@ -48,24 +48,24 @@ const getWinnerBadge = (shifts: { for: number; against: number }) => {
     return (
       <span
         className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-600 text-white mb-4"
-        aria-label="Winner: Pro Side"
+        aria-label="Winner: For the Motion"
       >
         <span className="mr-1" aria-hidden="true">
           🏆
         </span>
-        Winner: Pro Side
+        Winner: For the Motion
       </span>
     );
   } else if (winner === "against") {
     return (
       <span
         className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-red-600 text-white mb-4"
-        aria-label="Winner: Con Side"
+        aria-label="Winner: Against the Motion"
       >
         <span className="mr-1" aria-hidden="true">
           🏆
         </span>
-        Winner: Con Side
+        Winner: Against the Motion
       </span>
     );
   } else if (winner === "tie" || winner === "undecided") {
@@ -134,24 +134,24 @@ const DebateInfoPanel: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 mt-2">
           <div className="flex-1 bg-blue-50 rounded-lg p-3">
             <div className="text-xs font-semibold text-blue-700 uppercase mb-1">
-              Pro Side
+              For the Motion
             </div>
             <div
               className="text-gray-900 font-medium"
               tabIndex={0}
-              aria-label="Pro side info"
+              aria-label="For the Motion info"
             >
               {debate.proDescription || "N/A"}
             </div>
           </div>
           <div className="flex-1 bg-red-50 rounded-lg p-3">
             <div className="text-xs font-semibold text-red-700 uppercase mb-1">
-              Con Side
+              Against the Motion
             </div>
             <div
               className="text-gray-900 font-medium"
               tabIndex={0}
-              aria-label="Con side info"
+              aria-label="Against the Motion info"
             >
               {debate.conDescription || "N/A"}
             </div>
