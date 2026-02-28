@@ -1,10 +1,12 @@
 import React from "react";
+import { Analytics } from "@vercel/analytics/next"
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="w-full py-4 px-4 mt-auto">
+      <Analytics />
       <div className="border-t border-gray-100/10 pt-4 mx-auto px-8" />
       <div className="container mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
         <a
