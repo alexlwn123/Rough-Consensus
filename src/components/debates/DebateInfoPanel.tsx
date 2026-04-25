@@ -89,7 +89,6 @@ const DebateInfoPanel: React.FC = () => {
   const { debate, voteSummary } = useDebate();
 
   const showWinner = debate?.currentPhase === "finished" && voteSummary;
-
   const shifts = voteSummary?.percentShift;
 
   if (!debate) return null;
@@ -118,7 +117,7 @@ const DebateInfoPanel: React.FC = () => {
         <h1
           className="text-2xl font-bold text-gray-900 mb-1"
           tabIndex={0}
-          aria-label="Debate motion"
+          aria-label="Debate title"
         >
           {debate.title}
         </h1>

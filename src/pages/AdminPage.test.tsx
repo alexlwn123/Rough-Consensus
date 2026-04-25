@@ -87,7 +87,9 @@ describe("AdminPage", () => {
       data: makeDebateDb({
         id: "debate-2",
         title: "New Debate",
-        description: "Created from test",
+        motion: "Created from test",
+        pro_description: "Pro case",
+        con_description: "Con case",
         current_phase: "scheduled",
         created_by: "admin-1",
       }),
@@ -162,16 +164,17 @@ describe("AdminPage", () => {
       screen.getByRole("button", { name: "Create New Debate" }),
     );
     await user.type(screen.getByLabelText("Title"), "New Debate");
-    await user.type(
-      screen.getByLabelText("Description"),
-      "Created from test",
-    );
+    await user.type(screen.getByLabelText("Motion"), "Created from test");
+    await user.type(screen.getByLabelText("Pro Description"), "Pro case");
+    await user.type(screen.getByLabelText("Con Description"), "Con case");
     await user.click(screen.getByRole("button", { name: "Create Debate" }));
 
     expect(mockDebatesInsert).toHaveBeenCalledWith([
       {
         title: "New Debate",
-        description: "Created from test",
+        motion: "Created from test",
+        pro_description: "Pro case",
+        con_description: "Con case",
         current_phase: "scheduled",
         created_by: "admin-1",
       },
