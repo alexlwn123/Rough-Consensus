@@ -14,16 +14,20 @@ import {
 } from "../lib/utils";
 import Footer from "../components/layout/Footer";
 
+const initialFormData = {
+  title: "",
+  motion: "",
+  proDescription: "",
+  conDescription: "",
+};
+
 const AdminPage: React.FC = () => {
   const { currentUser, loading } = useAuth();
   const [debates, setDebates] = useState<Debate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDebate, setSelectedDebate] = useState<Debate | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-  });
+  const [formData, setFormData] = useState(initialFormData);
 
   // Fetch debates from Supabase
   useEffect(() => {
@@ -65,12 +69,16 @@ const AdminPage: React.FC = () => {
 
   const handleCreateDebate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !currentUser) return;
+    const title = formData.title.trim();
+
+    if (!title || !currentUser) return;
 
     try {
       const newDebate = {
-        title: formData.title,
-        description: formData.description,
+        title,
+        motion: formData.motion.trim() || null,
+        pro_description: formData.proDescription.trim() || null,
+        con_description: formData.conDescription.trim() || null,
         current_phase: "scheduled" as const,
         created_by: currentUser.id,
       };
@@ -87,7 +95,7 @@ const AdminPage: React.FC = () => {
       const mappedDebate: Debate = coerceDebateFromDb(data);
 
       setDebates([mappedDebate, ...debates]);
-      setFormData({ title: "", description: "" });
+      setFormData(initialFormData);
       setShowForm(false);
     } catch (error) {
       console.error("Error creating debate:", error);
@@ -158,19 +166,59 @@ const AdminPage: React.FC = () => {
               </div>
               <div>
                 <label
-                  htmlFor="description"
+                  htmlFor="motion"
                   className="block text-gray-700 font-medium mb-2"
                 >
-                  Description
+                  Motion
                 </label>
                 <textarea
-                  id="description"
-                  value={formData.description}
+                  id="motion"
+                  value={formData.motion}
                   onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
+                    setFormData({ ...formData, motion: e.target.value })
                   }
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows={4}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="proDescription"
+                  className="block text-gray-700 font-medium mb-2"
+                >
+                  Pro Description
+                </label>
+                <textarea
+                  id="proDescription"
+                  value={formData.proDescription}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      proDescription: e.target.value,
+                    })
+                  }
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={3}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="conDescription"
+                  className="block text-gray-700 font-medium mb-2"
+                >
+                  Con Description
+                </label>
+                <textarea
+                  id="conDescription"
+                  value={formData.conDescription}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      conDescription: e.target.value,
+                    })
+                  }
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={3}
                 />
               </div>
               <button
@@ -213,7 +261,7 @@ const AdminPage: React.FC = () => {
                     </Button>
                   </span>
                   <p className="text-gray-600 text-sm sm:text-base line-clamp-3">
-                    {debate.description || "No description provided"}
+                    {debate.motion || debate.description || "No motion provided"}
                   </p>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:justify-between">
                     <span
