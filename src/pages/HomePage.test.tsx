@@ -1,141 +1,77 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter, useLocation } from "react-router-dom";
+import { beforeEach, expect, it, vi } from "vitest";
 import HomePage from "./HomePage";
-import { makeDebateDb } from "../test/factories";
-
-const {
-  mockUseAuth,
-  mockFetchDebates,
-  mockRegisterDebateAccess,
-  mockStoreActiveDebateId,
-  mockGetActiveDebateId,
-} = vi.hoisted(() => ({
-  mockUseAuth: vi.fn(),
-  mockFetchDebates: vi.fn(),
-  mockRegisterDebateAccess: vi.fn(),
-  mockStoreActiveDebateId: vi.fn(),
-  mockGetActiveDebateId: vi.fn(),
+import { makeDebate } from "../test/factories";
+const mocks = vi.hoisted(() => ({
+  query: vi.fn(),
+  join: vi.fn(),
+  auth: vi.fn(),
 }));
-
-vi.mock("../context/AuthContext", () => ({
-  useAuth: () => mockUseAuth(),
+vi.mock("convex/react", () => ({
+  useQuery: mocks.query,
+  useMutation: () => mocks.join,
 }));
-
-vi.mock("../services/supabase", () => ({
-  fetchDebates: (...args: unknown[]) => mockFetchDebates(...args),
-  registerDebateAccess: (...args: unknown[]) => mockRegisterDebateAccess(...args),
-}));
-
-vi.mock("../utils/storage", () => ({
-  storeActiveDebateId: (...args: unknown[]) => mockStoreActiveDebateId(...args),
-  getActiveDebateId: (...args: unknown[]) => mockGetActiveDebateId(...args),
-}));
-
-vi.mock("../components/layout/Header", () => ({
-  default: ({ title }: { title: string }) => <div>{title}</div>,
-}));
-
-vi.mock("../components/layout/Footer", () => ({
-  default: () => <div>Footer</div>,
-}));
-
-vi.mock("../components/auth/GitHubLogin", () => ({
-  default: () => <div>GitHub Login</div>,
-}));
-
-vi.mock("../components/debates/DebateList", () => ({
-  default: ({
-    title,
-    debates,
-  }: {
-    title: string;
-    debates: Array<{ id: string; title: string }>;
-  }) => (
-    <section>
-      <h2>{title}</h2>
-      {debates.map((debate) => (
-        <p key={debate.id}>{debate.title}</p>
-      ))}
-    </section>
-  ),
-}));
-
-describe("HomePage", () => {
-  beforeEach(() => {
-    vi.spyOn(console, "log").mockImplementation(() => {});
-    mockUseAuth.mockReturnValue({
-      currentUser: null,
-      loading: false,
-      signIn: vi.fn(),
-      signOut: vi.fn(),
-    });
-    mockFetchDebates.mockResolvedValue([]);
-    mockRegisterDebateAccess.mockResolvedValue(true);
-    mockStoreActiveDebateId.mockReset();
-    mockGetActiveDebateId.mockReturnValue(null);
+vi.mock("../context/AuthContext", () => ({ useAuth: mocks.auth }));
+function Location() {
+  return <span data-testid="url">{useLocation().search}</span>;
+}
+beforeEach(() => {
+  vi.clearAllMocks();
+  localStorage.clear();
+  mocks.auth.mockReturnValue({
+    currentUser: { id: "one", displayName: "Alex" },
   });
-
-  it("shows the unauthenticated landing state without fetching debates", () => {
-    render(
-      <MemoryRouter
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-      >
-        <HomePage />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByText("Rough Consensus")).toBeInTheDocument();
-    expect(screen.getByText("GitHub Login")).toBeInTheDocument();
-    expect(mockFetchDebates).not.toHaveBeenCalled();
+  mocks.join.mockResolvedValue("old-id");
+  mocks.query.mockReturnValue([]);
+});
+it("preserves an invite before login and removes only its parameter after joining", async () => {
+  mocks.auth.mockReturnValue({ currentUser: null, signIn: vi.fn() });
+  const { rerender } = render(
+    <MemoryRouter initialEntries={["/?id=old-id&keep=yes"]}>
+      <HomePage />
+      <Location />
+    </MemoryRouter>,
+  );
+  expect(localStorage.getItem("active_debate_id")).toBe("old-id");
+  expect(mocks.join).not.toHaveBeenCalled();
+  mocks.auth.mockReturnValue({
+    currentUser: { id: "one", displayName: "Alex" },
   });
-
-  it("fetches and groups debates for authenticated users", async () => {
-    mockUseAuth.mockReturnValue({
-      currentUser: {
-        id: "user-1",
-        displayName: "Alex",
-        isAdmin: false,
-      },
-      loading: false,
-      signIn: vi.fn(),
-      signOut: vi.fn(),
-    });
-    mockFetchDebates.mockResolvedValue([
-      makeDebateDb({
-        id: "ongoing-1",
-        title: "Current Debate",
-        current_phase: "pre",
-      }),
-      makeDebateDb({
-        id: "scheduled-1",
-        title: "Upcoming Debate",
-        current_phase: "scheduled",
-      }),
-      makeDebateDb({
-        id: "finished-1",
-        title: "Past Debate",
-        current_phase: "finished",
-      }),
-    ]);
-
-    render(
-      <MemoryRouter
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-      >
-        <HomePage />
-      </MemoryRouter>,
-    );
-
-    await waitFor(() => {
-      expect(mockFetchDebates).toHaveBeenCalledTimes(1);
-    });
-
-    expect(screen.getByText("Ongoing Debates")).toBeInTheDocument();
-    expect(screen.getByText("Upcoming Debates")).toBeInTheDocument();
-    expect(screen.getByText("Past Debates")).toBeInTheDocument();
-    expect(screen.getByText("Current Debate")).toBeInTheDocument();
-    expect(screen.getByText("Upcoming Debate")).toBeInTheDocument();
-    expect(screen.getByText("Past Debate")).toBeInTheDocument();
-  });
+  rerender(
+    <MemoryRouter initialEntries={["/?id=old-id&keep=yes"]}>
+      <HomePage />
+      <Location />
+    </MemoryRouter>,
+  );
+  await waitFor(() =>
+    expect(mocks.join).toHaveBeenCalledWith({ publicId: "old-id" }),
+  );
+  await waitFor(() =>
+    expect(screen.getByTestId("url")).toHaveTextContent("?keep=yes"),
+  );
+});
+it("renders debates from the authorized subscription", () => {
+  mocks.query.mockReturnValue([
+    makeDebate({ title: "Past debate", currentPhase: "finished" }),
+    makeDebate({ id: "two", title: "Coming soon" }),
+  ]);
+  render(
+    <MemoryRouter>
+      <HomePage />
+    </MemoryRouter>,
+  );
+  expect(screen.getByText("Past debate")).toBeInTheDocument();
+  expect(screen.getByText("Coming soon")).toBeInTheDocument();
+});
+it("reports a rejected invite instead of silently hiding the error", async () => {
+  mocks.join.mockRejectedValue(new Error("missing"));
+  render(
+    <MemoryRouter initialEntries={["/?id=missing"]}>
+      <HomePage />
+    </MemoryRouter>,
+  );
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "invitation could not be opened",
+  );
 });

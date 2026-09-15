@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { VoteOption } from "../../types";
 import VoteCard from "../ui/VoteCard";
 import { useDebate } from "../../context/DebateContext";
@@ -20,23 +20,34 @@ const getVote = (vote: unknown): VoteOption | null => {
 };
 
 const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
-  const { debate, handleVote, userVote } = useDebate();
+  const { debate, handleVote, userVote, votingPending, connected } =
+    useDebate();
+  const [error, setError] = useState<string | null>(null);
 
   // Check if this phase is active
   const isActivePhase = debate?.currentPhase === phase;
   const didPreVote = !!userVote?.pre_vote;
-  const canVote = isActivePhase && (phase === "pre" || didPreVote);
+  const canVote =
+    isActivePhase &&
+    !votingPending &&
+    connected !== false &&
+    (phase === "pre" || didPreVote);
 
   // Get user's vote for this phase
   const currentVote = getVote(
-    phase === "pre" ? userVote?.pre_vote : userVote?.post_vote
+    phase === "pre" ? userVote?.pre_vote : userVote?.post_vote,
   );
 
   const handleVoteSelection = async (option: VoteOption) => {
+    setError(null);
     try {
       await handleVote(option);
     } catch (error) {
-      console.error("Error voting:", error);
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Your vote could not be recorded. Please try again.",
+      );
     }
   };
 
@@ -59,6 +70,21 @@ const VotingSection: React.FC<VotingSectionProps> = ({ phase }) => {
         <p className="text-gray-600 mt-1">{getPhaseDescription()}</p>
       </div>
 
+      {error && (
+        <p role="alert" className="mb-3 text-red-700">
+          {error}
+        </p>
+      )}
+      {connected === false && (
+        <p role="status" className="mb-3 text-amber-700">
+          Reconnecting. Wait for your connection before voting.
+        </p>
+      )}
+      {votingPending && (
+        <p role="status" className="mb-3 text-blue-700">
+          Submitting your vote…
+        </p>
+      )}
       <div className="space-y-4">
         <VoteCard
           option="for"

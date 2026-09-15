@@ -126,7 +126,7 @@ const Header: React.FC<HeaderProps> = ({ title, debateTitle, showBack }) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={signIn}
+              onClick={() => void signIn()}
               className="border-white text-white hover:bg-white hover:bg-opacity-10 whitespace-nowrap gap-1"
               icon={<Github className="h-4 w-4" />}
               aria-label="Sign in with GitHub"

@@ -1,118 +1,74 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { api } from "../../convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import GitHubLogin from "../components/auth/GitHubLogin";
 import DebateList from "../components/debates/DebateList";
-import { Debate } from "../types";
-import { fetchDebates, registerDebateAccess } from "../services/supabase";
-import { coerceDebateListFromDb } from "../lib/utils";
-import { useLocation, useNavigate } from "react-router-dom";
 import { storeActiveDebateId, getActiveDebateId } from "../utils/storage";
 import rcLogo from "../assets/rc-logo.svg";
 
-const HomePage: React.FC = () => {
+function HomePage() {
   const { currentUser } = useAuth();
-  const [debates, setDebates] = useState<Debate[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
-
-  // Check for debate ID in URL params, store it, and register access on the server
+  const join = useMutation(api.debates.join);
+  const data = useQuery(api.debates.listVisible, currentUser ? {} : "skip");
+  const debates = currentUser ? (data ?? []) : [];
+  const isLoading = !!currentUser && data === undefined;
+  const [joinError, setJoinError] = useState<string | null>(null);
+  const userId = currentUser?.id;
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const debateId = searchParams.get("id");
-
-    if (!debateId) {
-      console.log("no debateId");
-      return;
-    }
-
-    // Store the debate ID in local storage
-    storeActiveDebateId(debateId);
-
-    if (!currentUser) {
-      console.log("no current user");
-      return;
-    }
-
-    // Register access on the server if user is logged in
-    registerDebateAccess(debateId).then((success) => {
-      if (!success) {
-        console.error("Failed to register debate access");
-        return;
-      }
-      // Remove the 'id' param from the URL, keep other params
-      const newParams = new URLSearchParams(location.search);
-      newParams.delete("id");
-      const newSearch = newParams.toString();
-      navigate(
-        {
-          pathname: location.pathname,
-          search: newSearch ? `?${newSearch}` : "",
-        },
-        { replace: true }
-      );
-    });
-  }, [location, currentUser, navigate]);
-
-  useEffect(() => {
-    // Get the active debate ID from storage
-    const storedDebateId = getActiveDebateId();
-
-    // If we have a stored debate ID and the user is logged in, ensure access is registered
-    if (storedDebateId && currentUser) {
-      console.log("registering debate access", storedDebateId);
-      registerDebateAccess(storedDebateId).catch((err) => {
-        console.error("Error registering debate access:", err);
+    const params = new URLSearchParams(location.search);
+    const invite = params.get("id");
+    if (invite) storeActiveDebateId(invite);
+    const debateId = invite || getActiveDebateId();
+    if (!debateId || !userId) return;
+    let cancelled = false;
+    join({ publicId: debateId })
+      .then(() => {
+        if (cancelled) return;
+        setJoinError(null);
+        if (invite) {
+          params.delete("id");
+          navigate(
+            {
+              pathname: location.pathname,
+              search: params.toString() ? `?${params}` : "",
+            },
+            { replace: true },
+          );
+        }
+      })
+      .catch(() => {
+        if (!cancelled)
+          setJoinError(
+            "This invitation could not be opened. Please check the link and try again.",
+          );
       });
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        // Fetch debates (RLS will automatically filter based on user's access)
-        const data = await fetchDebates();
-
-        // Map database column names to our interface names
-        const mappedDebates = coerceDebateListFromDb(data || []);
-
-        setDebates(mappedDebates);
-      } catch (error) {
-        console.error("Error fetching debates:", error);
-      } finally {
-        setIsLoading(false);
-      }
+    return () => {
+      cancelled = true;
     };
-
-    // Only fetch if user is logged in
-    if (currentUser) {
-      fetch();
-    } else {
-      setIsLoading(false);
-      setDebates([]);
-    }
-
-    // Re-fetch debates when the user changes
-  }, [currentUser]);
+  }, [location.pathname, location.search, userId, join, navigate]);
 
   // Get ongoing debates (now filtered on server if needed)
   const ongoingDebates = debates.filter(
     (debate) =>
       debate.currentPhase === "pre" ||
       debate.currentPhase === "post" ||
-      debate.currentPhase === "ongoing"
+      debate.currentPhase === "ongoing",
   );
 
   // Get scheduled debates (now filtered on server if needed)
   const scheduledDebates = debates.filter(
-    (debate) => debate.currentPhase === "scheduled"
+    (debate) => debate.currentPhase === "scheduled",
   );
 
   // Get past debates (always shown)
   const pastDebates = debates.filter(
-    (debate) => debate.currentPhase === "finished"
+    (debate) => debate.currentPhase === "finished",
   );
 
   return (
@@ -156,6 +112,11 @@ const HomePage: React.FC = () => {
           </div>
         ) : (
           <div className="container mx-auto px-4 py-4">
+            {joinError && (
+              <p role="alert" className="mb-4 text-red-700">
+                {joinError}
+              </p>
+            )}
             <p className="text-md font-medium italic text-gray-800 mb-2 text-center">
               Where great minds don't think alike
             </p>
@@ -218,6 +179,6 @@ const HomePage: React.FC = () => {
       <Footer />
     </div>
   );
-};
+}
 
 export default HomePage;

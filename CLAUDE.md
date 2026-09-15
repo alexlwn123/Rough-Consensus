@@ -21,7 +21,7 @@
 - Use error boundaries for error handling
 - Code organization: Keep components in appropriate subdirectories
 - Context API for state management
-- Supabase for backend services
+- Convex for backend services; shared application types live in `shared/domain.ts`
 - Lucide icons for UI elements
 
 ## Project Structure
@@ -29,3 +29,7 @@
 - React + Vite + TypeScript + TailwindCSS
 - D3 with d3-sankey for visualization
 - React Router for navigation
+
+## Backend changes
+
+Follow the backend rules and migration-runbook pointer in [AGENTS.md](AGENTS.md).
