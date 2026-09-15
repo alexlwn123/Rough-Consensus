@@ -69,7 +69,7 @@ pnpm build
 
 Public debate URLs retain their UUIDs. A signed-in visitor joins through `?id=<UUID>` invitations. Backend mutations enforce administrator roles, debate membership, the active phase, and one ballot per user. Post voting requires a pre vote. Finished results are public aggregates; each user can read only their own ballot.
 
-The migration lock blocks application writes until the imported snapshot is verified and explicitly opened. Development and production have separate locks. See the [migration status and cutover runbook](docs/convex-migration-status.md) before importing, deploying, or enabling writes. Historical SQL remains under `supabase/migrations` for reconciliation and recovery.
+The migration lock blocks application writes until the imported snapshot is verified and explicitly opened. Development and production have separate locks. See the [migration status and cutover runbook](docs/convex-migration-status.md) before importing, deploying, or enabling writes. Historical SQL is archived under [docs/migrations/supabase](docs/migrations/supabase/README.md) for reconciliation and recovery; it is not part of the active backend setup.
 
 ## Contributing
 
