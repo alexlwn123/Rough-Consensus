@@ -21,7 +21,7 @@
 - Use error boundaries for error handling
 - Code organization: Keep components in appropriate subdirectories
 - Context API for state management
-- Supabase for backend services
+- Convex for backend services; shared application types live in `shared/domain.ts`
 - Lucide icons for UI elements
 
 ## Project Structure
@@ -29,3 +29,10 @@
 - React + Vite + TypeScript + TailwindCSS
 - D3 with d3-sankey for visualization
 - React Router for navigation
+
+## Backend changes
+
+- Enforce identity, membership, roles, and voting phases in Convex functions; the browser is untrusted.
+- Preserve public debate UUIDs and provider-account identity mappings when changing storage.
+- Before imports, cutover, or enabling writes, read [the migration runbook](docs/convex-migration-status.md) for deployment state and verification requirements.
+- Run `pnpm test:run`, `pnpm lint`, and `pnpm build` after backend or frontend integration changes.

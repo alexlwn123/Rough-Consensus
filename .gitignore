@@ -24,6 +24,8 @@ dist-ssr
 *.sw?
 
 .env
+.migration/
 
 .mcp.json
 **/.claude/settings.local.json
+.vercel

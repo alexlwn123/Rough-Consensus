@@ -6,17 +6,20 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . && tsc --noEmit --strict",
+    "lint": "eslint . && tsc -p tsconfig.app.json --noEmit && tsc -p convex/tsconfig.json --noEmit",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run && vitest run --config vitest.convex.config.ts",
+    "test:backend": "vitest run --config vitest.convex.config.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.7",
+    "@auth/core": "^0.41.3",
+    "@convex-dev/auth": "^0.0.95",
     "@vercel/analytics": "^1.6.1",
     "clsx": "^2.1.1",
+    "convex": "^1.45.0",
     "d3": "^7.8.5",
     "d3-sankey": "^0.12.3",
     "framer-motion": "^12.9.4",
@@ -29,16 +32,19 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@eslint/js": "^9.25.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/d3": "^7.4.3",
     "@types/d3-sankey": "^0.12.1",
+    "@types/node": "^26.5.1",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.18",
+    "convex-test": "^0.0.58",
     "eslint": "^9.25.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",

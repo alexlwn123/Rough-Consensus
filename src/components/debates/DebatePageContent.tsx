@@ -21,11 +21,11 @@ const DebatePageContent: React.FC<{ debateId: string }> = ({ debateId }) => {
     );
   }
 
-  if (!currentUser && debate?.currentPhase !== "finished") {
+  if (!currentUser && debate && debate.currentPhase !== "finished") {
     return <Navigate to="/" />;
   }
 
-  if (!debateId) {
+  if (!debateId || !debate) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

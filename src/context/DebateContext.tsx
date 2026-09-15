@@ -18,6 +18,8 @@ export const DebateContext = createContext<DebateContextType>({
   handleVote: async () => {},
   changePhase: async () => {},
   voteSummary: null,
+  votingPending: false,
+  connected: true,
 });
 
 export const useDebate = () => useContext(DebateContext);
