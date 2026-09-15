@@ -43,7 +43,7 @@ This inventory comes from checked-in code and SQL, not an inspection of the live
 
 `get_debate_sankey_data` also exists in SQL/types, but the active results call uses `get_debate_result_data`. No active Supabase Storage or Edge Function calls were found. `src/services/firebase.ts` is an unreferenced leftover and Firebase is absent from package dependencies; it is not a second production backend migration.
 
-Source areas: [Supabase service](../src/services/supabase.ts), [vote service](../src/services/voteService.ts), [auth context](../src/context/AuthContext.tsx), [debate provider](../src/context/DebateProvider.tsx), [admin page](../src/pages/AdminPage.tsx), [types](../src/types/index.ts), [SQL migrations](../supabase/migrations).
+Source areas: [Supabase service](https://github.com/alexlwn123/Rough-Consensus/blob/74f10fa/src/services/supabase.ts), [vote service](https://github.com/alexlwn123/Rough-Consensus/blob/74f10fa/src/services/voteService.ts), [auth context](../src/context/AuthContext.tsx), [debate provider](../src/context/DebateProvider.tsx), [admin page](../src/pages/AdminPage.tsx), [types](../src/types/index.ts), [SQL migrations](migrations/supabase).
 
 ## Preserve behavior, make enforcement explicit
 
@@ -58,7 +58,7 @@ The following are proposed backend rules, derived from the UI. They deliberately
 - Results become available at `finished`, matching `ResultsPanel`. Enforce this in the backend too. The current RPCs check debate existence but do not include an explicit caller-access/phase check, and the original vote SELECT policy exposes ballots to authenticated users.
 - Exclude soft-deleted debates from normal discovery, joins, voting, and public results. Current list filtering already hides them, while direct fetching does not. Preserve the stored deletion flag; implementing the currently nonfunctional delete button is separate scope.
 
-These observations are based on the migrations; live policies, grants, and triggers may differ. [Initial policies](../supabase/migrations/20250501155030_twilight_darkness.sql), [access RPC](../supabase/migrations/20250506000000_debate_access.sql), [result RPCs](../supabase/migrations/20250502232656_remote_schema.sql), [voting rules in the UI](../src/components/voting/VotingSection.tsx), [results visibility](../src/components/results/ResultsPanel.tsx).
+These observations are based on the migrations; live policies, grants, and triggers may differ. [Initial policies](migrations/supabase/20250501155030_twilight_darkness.sql), [access RPC](migrations/supabase/20250506000000_debate_access.sql), [result RPCs](migrations/supabase/20250502232656_remote_schema.sql), [voting rules in the UI](../src/components/voting/VotingSection.tsx), [results visibility](../src/components/results/ResultsPanel.tsx).
 
 ## Target design
 
